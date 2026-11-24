@@ -1,0 +1,4 @@
+# ledger.json IS published on purpose (user's choice, 2026-11-24) so a friend can see the app with
+# real data. Exports and backups stay local.
+*.csv
+ticket-ledger-*.json
