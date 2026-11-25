@@ -2,3 +2,4 @@
 # real data. Exports and backups stay local.
 *.csv
 ticket-ledger-*.json
+memory.md
