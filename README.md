@@ -1,4 +1,4 @@
-# Ticket Sales Tracker
+# OOS: ticket tracker
 
 Installable phone app (PWA) for tracking ticket lots, each sale, pulling profit and monthly P&L.
 It's static files with no build step. Data is kept on the device (works offline) and synced
@@ -13,7 +13,9 @@ through Supabase.
 | `supabase/schema.sql` | Table, row-level security, realtime |
 | `manifest.webmanifest`, `sw.js`, `icons/` | What makes it installable and work offline |
 | `ledger.json` | The data a device starts with when it has nothing saved yet. **Published with the site, so it's public.** |
-| `tools/make-icons.js` | Regenerates the icons (`node tools/make-icons.js`) |
+| `supabase/functions/mail-sync/index.ts` | Edge Function that finds ticket emails in Gmail (see Email sync) |
+| `tools/mail-sync.test.mjs` | Tests for it: `npm test` (Node 22.18+ / 24, no installs) |
+| `tools/make-icons.ps1` | Regenerates the icons from `icons/logo-source.jpg` (`powershell -ExecutionPolicy Bypass -File tools/make-icons.ps1`) |
 
 ## Setup (once, about 10 minutes, free)
 
@@ -22,7 +24,7 @@ through Supabase.
 3. **Keys:** in Project Settings → API, copy the Project URL and the `anon` / publishable key
    into `config.js`. Don't use the `service_role` / secret key.
 4. **Auth URL:** in Authentication → URL Configuration, set Site URL to where the app will live
-   (e.g. `https://quandevcz.github.io/ticket-tracker/`) so the email confirmation link lands there.
+   (e.g. `https://quandevcz.github.io/resold-/`) so the email confirmation link lands there.
 5. **First upload of your data:** run it locally (`npx serve .`, then open the URL it prints) →
    the app loads `ledger.json` → create an account under **Sync** → confirm the email → sign in.
    The ledger now goes up to Supabase.
@@ -45,3 +47,31 @@ through Supabase.
 
 After changing files, bump `VERSION` in `sw.js` so phones fetch the new version (it shows on the
 second launch).
+
+## Email sync (Gmail → Review)
+
+**Tickets → Sync → Sync ticket emails** searches your Gmail for emails whose subject contains one of
+your keywords (Sync → Search keywords). It guesses the event, date, ticket count, price and seats
+and puts them in **Review**, where you fix anything that's off and click **Add** (new ticket group or
+a sale on an existing group) or **Ignore**. Nothing is added without you clicking Add. Handled
+emails don't come back on the next sync. The mailbox is only read, never changed.
+
+It runs as a Supabase Edge Function, because a browser can't talk to a mailbox directly. Needs the
+Setup above done first (project, `config.js`, signed in on the Sync page). Then, once:
+
+1. **Gmail app password:** turn on 2-Step Verification for your Google account, then open
+   myaccount.google.com/apppasswords, create one (name it "OOS") and copy the 16 letters. You can
+   delete it there any time to cut off access. Your normal Google password is never used.
+2. **Create the function:** Supabase Dashboard → Edge Functions → Deploy a new function → **Via
+   editor**. Name it exactly `mail-sync`, replace the example code with the whole of
+   `supabase/functions/mail-sync/index.ts`, and deploy. Leave "Verify JWT" on.
+3. **Secrets:** Edge Functions → Secrets → add
+   - `GMAIL_USER`: your Gmail address
+   - `GMAIL_APP_PASSWORD`: the 16-letter app password
+   - `OWNER_EMAIL`: the email you sign in to OOS with. Only that account may read your mail;
+     anyone else who signs up gets refused.
+4. In the app: Tickets → Sync → Sync ticket emails. The first run looks back 120 days (newest 30
+   emails); later runs only look at mail since the last sync.
+
+The app password lives only in Supabase secrets, never in this repo or the browser.
+CZK amounts are converted at the app's 24.32 Kč/€; other currencies are flagged so you convert them.

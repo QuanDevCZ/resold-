@@ -66,3 +66,104 @@ Live URL: https://quandevcz.github.io/ticket-tracker/
 Out of scope / user's steps
 - Creating the Supabase project and keys (needs the user's account).
 - Pushing to GitHub / deploying (commit only when asked).
+
+Metric card (2026-11-25): user asked to add Kokonut UI's metric-card (kokonutui.com/r/metric-card.json,
+MIT, by @dorianbaffier). `npx shadcn add` needs React + Tailwind, this app is plain HTML, so the user
+chose: PORT it to plain JS/CSS inside index.html (credited in a comment), and REPLACE the profit chart.
+- Card: "Profit" label, 7D / 30D / 90D switch with a sliding pill (choice remembered), big total with
+  digits that roll on wheels, ▲/▼ % vs the previous period of the same length, caption.
+- Chart: current period solid, previous period dashed. Lines are the running total within the period
+  (sales are sparse, so daily values would be mostly flat with spikes). Hover/touch reads one day
+  (that day's profit), drag or Shift+arrows reads a range (sum), Esc / Clear resets. Lines morph
+  between periods (still for reduced-motion users). First date · "Previous period" · last date under it.
+- Breakdown: bar + list of Tickets (#ff2e88) and Pulling (#ececef); tap one to chart it alone
+  (combined line is #4d8dff). Handles negative profit (a loss sale).
+- Removed with the old chart: All lines/Tickets/Pulling/Combined switch, Month/All ranges, month
+  picker, Running total toggle, "Last sale" side box. Stat cards on the right stay.
+- Bump sw.js VERSION to tt-v3.
+
+Dashboard layout (2026-11-25, from the user's reference image "dashboard.jpg"): same design system.
+- Top row, 4 cards: REVENUE (ticket sales; sub: sales count · unsold at cost), PROFIT (tickets +
+  pulling, in accent pink; sub: split), CONFIRMED ROI (ticket profit / cost of sold tickets),
+  TICKETS (total; sub: sold · unsold). The old 4 stat boxes are gone.
+- Under it: the metric card (unchanged) on the left, UPCOMING EVENTS on the right: groups with an
+  event today or later, soonest first: name, date, "N tickets · M unsold / all sold · D-x" (D-x in
+  pink within 7 days). The list scrolls inside a card that matches the chart's height.
+- Desktop no longer locked to one screen height (it clipped the breakdown); the page scrolls.
+- Phone: KPI cards 2×2 with smaller numbers (no sideways scroll at 360px), chart, then events.
+- sw.js VERSION tt-v4.
+
+Logo + name (2026-11-25): the app is now called OOS (title, home-screen name, menu header "OOS /
+Ticket tracker", dashboard h1). New logo from the user ("OŌS", white on black), kept as
+icons/logo-source.jpg; tools/make-icons.ps1 (built-in Windows System.Drawing, no installs) crops the
+letters onto a full-bleed black square -> icon-512 / icon-192 / apple-touch-icon. The old
+tools/make-icons.js (generated pink ticket icon) was removed. Manifest background #000. sw.js tt-v5.
+- Dashboard heading is now the OŌS wordmark (CSS: wide letter gap, flat bar over the middle O,
+  46px on desktop / 44px on phone); the subtitle next to it was removed.
+
+Tickets page + app-wide restyle (2026-11-25, from the user's reference "inventorypage.jpg"):
+- Header: "Tickets" + subtitle on the left, pink "+ Add New" button on the right. The always-open
+  add form is removed; Add New opens the form in an overlay (same fields, same validation).
+- 4 cards: Ticket revenue, Ticket profit (pink), In stock (unsold count, € at cost), Investment
+  (all purchases, number of groups).
+- Full-width search. Status tabs: All · In Stock (groups with unsold tickets) · Sold (fully sold)
+  · Transferred. (For Sale / Disputed / Paid / Lost left out on purpose.) Old filter selects,
+  date range and the "Pending transfer" panel are removed (pending shows as a chip on the group).
+- "Sort by:" Event date (soonest first) · Name · Invested · Profit · ROI (highest first), and an
+  "N events" count on the right.
+- Each group is a card: chevron, event name + "Today!" / "D-x" (≤7 days) / "Past" badge + transfer
+  chip, sector · row · date below; right: € invested + "N tickets" pink pill. Opened: one row per
+  ticket (Seat in mono, Paid, Sold on, Revenue, Profit, ROI, Status pill Sold / In stock, delete-sale
+  icon on sold rows; sales are assigned to tickets oldest sale first). Under the table: notes, the
+  add-sale form, transfer status select, recap / edit / delete icon buttons.
+- Whole app: Geist (+ Geist Mono for seats) instead of Inter, lighter weights (headings 500,
+  numbers ~450), flat cards (no coloured top line), 14px card radius, 8px buttons/inputs, pink
+  filled tabs/chips for the active choice. Same colours (dark + pink accent). Recap ticket untouched.
+- sw.js tt-v6.
+- Status column is editable per ticket (2026-11-25): In stock -> Sold opens date + price fields in that
+  row (Save / Cancel, Enter / Esc) and saves a 1-ticket sale pinned to that row (sale.seat = row index).
+  Sold -> In stock removes just that ticket (a multi-ticket sale is split so the others keep their
+  rows). Rows without a pinned sale are filled oldest sale first. sw.js tt-v7.
+
+Tickets header: Sync / Review / Export / Import (2026-11-25, from "inventorypage.jpg"):
+User choices: mailbox = Gmail; find emails by KEYWORD search (not per-platform parsers);
+server = Supabase (not Cloudflare). Zero cost.
+- Header buttons: [Sync v] [Review (n)] [Export v] [Import] [+ Add New].
+  Export menu: Backup JSON, Tickets CSV, Pulling CSV, Monthly P&L CSV (same code as Data page).
+  Import: CSV or JSON file (same code as Data page). Sync menu: "Sync ticket emails" (Gmail via
+  IMAP) and "Search keywords" (edit the list), plus "last synced".
+- Server: Supabase Edge Function supabase/functions/mail-sync/index.ts (no imports, one file).
+  * Only the owner may call it: checks the caller's Supabase login against secret OWNER_EMAIL.
+  * Gmail login with an app password from secrets GMAIL_USER / GMAIL_APP_PASSWORD (never in the repo
+    or the browser). Read-only: EXAMINE the "All Mail" folder (found via LIST \All, else INBOX).
+  * Search: X-GM-RAW  subject:("kw1" OR "kw2" ...) -category:promotions  + after:<date> (first sync
+    looks back 120 days), newest 30 messages, first 60 KB of each.
+  * Parses MIME (multipart, base64, quoted-printable, charsets, encoded subjects) and GUESSES:
+    type purchase/sale, event (cleaned subject), event date, qty, total + price each, currency,
+    sector / row / seats. Returns them; it never changes the ledger itself.
+- App: results go into S.mail (pending review); handled ones go into S.seen (message ids) so they
+  don't come back. Both are saved and synced with the ledger and kept in backups.
+- Review overlay: one card per found email (subject, sender, date, snippet) with the guesses as
+  editable fields. "New tickets" -> creates a ticket group; "Sale" -> pick the group (best name
+  match preselected), adds a sale; "Ignore" -> hides it. Non-EUR amounts: CZK converted at the
+  app's 24.32 rate, other currencies left for the user to fix (flagged).
+- Tests: node --test (Node 24 runs the .ts directly) for MIME decoding, the guesses, and the IMAP
+  reader against a scripted fake Gmail conversation. Real Gmail can only be tested once the user
+  has set up Supabase + the app password.
+- User steps (README): Supabase project + schema + config.js, sign in, Gmail 2-step + app password,
+  create the Edge Function in the dashboard editor, add the 3 secrets.
+
+Pulling page (2026-11-25, from "commisions.jpg"; same look as Tickets):
+- Header: "Pulling" + subtitle; Export (Pulling CSV, Backup JSON), Import, + Add New. The always-open
+  form is gone; Add New / the pencil open an overlay form (add or edit, all fields, status select).
+- Cards: Total profit (pink, N transferred), Average profit (per sale), Not transferred (orange,
+  € + N pending), Total sales (count, tickets all time).
+- Filter bar: search (client, event, notes) + All status / Transferred / Not transferred + month.
+- Table card: select-all + row checkboxes, Date, Client, Items (event, "N tickets · Event date",
+  notes), Profit, Status dropdown (Transferred green / Not transferred orange, changes right away),
+  edit + delete (delete now asks first). Newest first. Bulk bar: Mark transferred / not / Clear.
+- Left out on purpose: the reference's Grouped/List toggle. sw.js tt-v10.
+
+Descriptions + compact pass (2026-11-25): ticket group notes show as a third line in the group header
+(and labelled 'Description' when opened); Pulling has its own Notes column. Smaller cards, numbers,
+buttons, rows and gaps across the app so more fits on one screen. sw.js tt-v11.

@@ -1,0 +1,8 @@
+{
+  "name": "oos",
+  "private": true,
+  "description": "OOS ticket tracker. No dependencies; the app is index.html.",
+  "scripts": {
+    "test": "node --test tools/mail-sync.test.mjs"
+  }
+}

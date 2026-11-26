@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ticket Sales Tracker</title>
+<title>OOS</title>
 <meta name="theme-color" content="#07080d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tickets">
+<meta name="apple-mobile-web-app-title" content="OOS">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#eef1f6;--surf:#fff;--ink:#13203a;--mute:#5d6b85;--line:#d5dbe6;--acc:#2447d6;--pos:#0c8a5b;--neg:#c23838;--stub:#ffd84d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1424;--surf:#18203a;--ink:#e8ecf7;--mute:#9aa7c4;--line:#2b3556;--acc:#7d96ff;--pos:#3fd49a;--neg:#ff7b7b;--stub:#e8c23a;color-scheme:dark}}
@@ -82,6 +82,29 @@ label,th{font-size:11px}
 .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
 .kpis .num{font-size:32px}
 @media (min-width:720px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.kpis .card{padding:18px 20px}
+.kpis .card{min-width:0}
+@media (max-width:719px){.kpis .card{padding:14px 16px}.kpis .num{font-size:clamp(21px,6.6vw,32px);white-space:nowrap}.kpis .trend{font-size:12.5px;display:block}}
+.kpis .num{margin:10px 0 6px}
+.kpis .num.acc{color:var(--acc)}
+.kpis .trend{color:var(--mute);font-size:14px}
+.kpis .trend b{font-weight:600;color:var(--c,var(--ink))}
+#dash,.ev{margin-top:12px}
+/* ---- wordmark: OŌS like the logo (wide spacing, flat bar over the middle O) ---- */
+h1.brand{display:flex;gap:.3em;font-size:44px;font-weight:600;letter-spacing:0;line-height:1;margin:16px 0 4px}
+.brand .mac{position:relative}
+.brand .mac:before{content:"";position:absolute;left:50%;top:-.2em;width:.58em;height:.12em;border-radius:.03em;background:currentColor;transform:translateX(-50%)}
+/* ---- upcoming events ---- */
+.ev-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ev-li{list-style:none;margin:10px 0 0;padding:0}
+.ev-li li{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.ev-li li:last-child{border-bottom:0}
+.ev-m{flex:1;min-width:0}
+.ev-m b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-m span{display:block;color:var(--mute);font-size:13px;white-space:nowrap}
+.ev-r{flex:none;color:var(--mute);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ev-r .un{color:#ff9f40}.ev-r .dd{color:var(--ink);font-weight:600}.ev-r .dd.soon{color:var(--acc)}
+.ev .empty{padding:28px 0 12px}
 input,select,textarea{background:#0f0f10;border-color:var(--line);border-radius:10px}
 .btn{background:var(--acc);border-radius:10px}
 .btn.ghost{background:var(--soft);border:1px solid var(--line);color:var(--ink)}
@@ -95,21 +118,58 @@ input,select,textarea{background:#0f0f10;border-color:var(--line);border-radius:
 .seg button[aria-pressed="true"]{background:rgba(255,46,136,.16);color:var(--acc)}
 .seg button{display:inline-flex;align-items:center;gap:6px}
 .seg .sw{width:9px;height:9px;border-radius:2px;display:inline-block;flex:none}
-#ser{max-width:100%;overflow-x:auto;scrollbar-width:none}
-#ser button{white-space:nowrap}
-@media (max-width:480px){#ser{display:flex;width:100%}#ser button{flex:1 1 auto;justify-content:center;padding:6px 4px;font-size:12px;gap:4px}}
+/* ---- metric card (port of Kokonut UI metric-card, MIT) ---- */
+.mc-h{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.mc-l{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-l b{color:var(--ink);font-weight:600}
+.mc-per{position:relative;display:flex;flex:none;background:#0f0f10;border:1px solid var(--line);border-radius:999px;padding:3px}
+.mc-per button{position:relative;width:46px;padding:5px 0;border:0;border-radius:999px;background:none;font:inherit;font-size:12px;font-weight:600;color:var(--mute);cursor:pointer;font-variant-numeric:tabular-nums;transition:color .2s ease-out}
+.mc-per button:hover{color:var(--ink)}.mc-per button[aria-pressed="true"]{color:var(--acc)}
+.mc-pill{position:absolute;top:3px;bottom:3px;left:3px;width:46px;border-radius:999px;background:rgba(255,46,136,.16);box-shadow:inset 0 0 0 1px rgba(255,46,136,.4);transition:transform .2s cubic-bezier(.23,1,.32,1)}
+.mc-v{display:flex;margin:16px 0 0;font-size:44px;font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.mc-v.neg{color:var(--neg)}
+.mc-n{display:inline-flex}
+.vh-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.rd{position:relative;display:inline-block;height:1em;overflow:hidden;line-height:1}
+.rd-0{visibility:hidden}
+.rd-w{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;transition:transform .38s cubic-bezier(.23,1,.32,1)}
+.rd-w span{display:block;height:1em;line-height:1}
+.mc-d{display:flex;align-items:center;gap:8px;min-height:22px;margin-top:10px;font-size:14px;font-variant-numeric:tabular-nums}
+#mcd{flex:none;font-weight:600}#mcd.up{color:var(--pos)}#mcd.dn{color:var(--neg)}#mcd.eq{color:var(--mute)}
+.mc-cap{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute)}
+.mc-clr{margin-left:auto;flex:none;border:0;background:none;color:var(--mute);font:inherit;font-size:12px;padding:3px 10px;border-radius:999px;cursor:pointer;transition:background-color .15s,color .15s}
+.mc-clr:hover{background:var(--soft);color:var(--ink)}
+.mc-ch{position:relative;height:150px;margin-top:22px;cursor:crosshair;touch-action:pan-y;border-radius:10px;outline:none;-webkit-user-select:none;user-select:none}
+.mc-ch:focus-visible{outline:2px solid var(--acc);outline-offset:6px}
+.mc-ch svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.mc-base{stroke:var(--line)}
+.mc-prev{fill:none;stroke:#56565d;stroke-width:1.25;stroke-dasharray:3 4}
+#mca{fill:var(--mcc);fill-opacity:.12}
+#mcdim,#mcc{fill:none;stroke:var(--mcc);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#mcdim{stroke-opacity:.28}
+.mc-ov{position:absolute;inset:0;pointer-events:none}
+.mc-vl{position:absolute;top:0;bottom:0;width:1px;transform:translateX(-50%);background:#2c2c30}
+.mc-vl.r{background:#4a4a50}
+.mc-dot{position:absolute;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);background:var(--mcc);box-shadow:0 0 0 4px var(--surf)}
+.mc-dot.tw{width:8px;height:8px;background:var(--surf);border:1px solid #6b6b72;box-shadow:none}
+.mc-end{position:absolute;right:0;width:8px;height:8px;border-radius:50%;transform:translate(50%,-50%);background:var(--mcc);box-shadow:0 0 0 4px var(--surf),0 0 14px var(--mcc);pointer-events:none;transition:top .42s cubic-bezier(.65,0,.35,1),opacity .2s}
+.mc-ax{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:12px;color:#6e6e74;font-variant-numeric:tabular-nums}
+.mc-pp{display:flex;align-items:center;gap:6px}.mc-pp i{width:12px;border-top:1px dashed #56565d}
+.mc-bd{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.mc-bar{display:flex;gap:2px;height:6px;border-radius:6px;background:var(--soft)}
+.mc-bar i{min-width:0;border-radius:6px;transition:flex-grow .3s cubic-bezier(.23,1,.32,1),opacity .3s}
+.mc-bar i.dim{opacity:.25}
+.mc-li{list-style:none;margin:10px -8px 0;padding:0}
+.mc-li button{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:0;border-radius:10px;background:none;color:var(--ink);font:inherit;font-size:14px;text-align:left;cursor:pointer;transition:background-color .15s,opacity .15s}
+.mc-li button:hover,.mc-li button[aria-pressed="true"]{background:var(--soft)}
+.mc-li button.dim{opacity:.5}
+.mc-li .sw{width:8px;height:8px;border-radius:50%;flex:none}
+.mc-li .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute)}
+.mc-li .vl{font-weight:600;font-variant-numeric:tabular-nums}
+.mc-li .sh{width:42px;text-align:right;color:#6e6e74;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.rd-w,.mc-pill,.mc-end,.mc-bar i,.mc-per button,.mc-li button{transition:none}}
 .tg{flex-direction:row!important;align-items:center;gap:8px!important;cursor:pointer}
 .tg input{width:auto;accent-color:var(--acc)}
-.ch-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
-.ch-side{text-align:right;min-width:0;max-width:52%}
-.ch-side b{display:block;font-weight:600;font-size:15px;margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ch-side span{display:block;color:var(--mute);font-size:14px;margin-top:2px}
-.cw{position:relative;margin-top:18px}
-.tip{position:absolute;top:0;pointer-events:none;background:#161617;border:1px solid #2c2c30;border-radius:12px;padding:10px 12px;font-size:14px;box-shadow:0 12px 30px rgba(0,0,0,.55);z-index:2}
-.tip b{display:block;color:var(--mute);font-weight:600;margin-bottom:6px}
-.tip div{display:flex;align-items:center;gap:8px;white-space:nowrap;padding:1px 0}
-.tip i,.lg i{width:13px;height:13px;border-radius:3px;display:inline-block;flex:none}
-.lg{display:inline-flex;align-items:center;gap:7px;margin-right:16px;font-size:13px;color:var(--mute)}
 .ov{position:fixed;inset:0;z-index:50;background:rgba(5,5,6,.94);overflow:auto;padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(30px + env(safe-area-inset-bottom,0px))}
 .ov[hidden]{display:none}
 .wrap{max-width:520px;margin:0 auto}
@@ -191,22 +251,208 @@ html.nav-open{overflow:hidden}
 @media (min-width:1024px){
 main{max-width:none;padding:12px 12px 24px}
 .topbar{padding-left:12px;padding-right:12px}
-.view[data-view="dash"]{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,21%);grid-template-rows:auto minmax(0,1fr);gap:12px;height:calc(100vh - 65px - 36px);height:calc(100dvh - 65px - 36px);min-height:470px}
+.view[data-view="dash"]{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:auto auto auto;gap:12px;align-items:stretch}
 .view[data-view="dash"] header{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:18px}
 .view[data-view="dash"] header .eyebrow{flex-basis:100%}
-.view[data-view="dash"] h1{font-size:30px;margin:6px 0 0}
+.view[data-view="dash"] h1.brand{font-size:46px;margin:12px 0 2px}
 .view[data-view="dash"] header .sub{margin:0}
 #dash{display:flex;flex-direction:column;min-height:0}
-#dash .cw{flex:1;min-height:180px;margin-top:10px}
-#dash #chart{position:absolute;inset:0}
-#dash .row{margin-top:12px}
-.kpis{margin-top:0;grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(0,1fr);gap:10px}
-.kpis .card{display:flex;flex-direction:column;justify-content:center;padding:12px 18px;min-height:0}
-.kpis .num{font-size:30px;margin:4px 0 2px}
-.kpis .trend{font-size:14px}
+#dash .mc-ch{flex:1;height:auto;min-height:220px}
+.kpis{grid-column:1/-1;margin-top:0}
+#dash,.ev{margin-top:0}
+.ev{display:flex;flex-direction:column;min-height:0}
+.ev-li{flex:1 1 0;height:0;min-height:0;overflow:auto;scrollbar-width:thin}
+.ev-m{display:flex;align-items:baseline;gap:10px}
 }
 .toast.bad{border-color:rgba(255,92,108,.5);color:#ff8a95}
 @media (prefers-reduced-motion:reduce){.nav,.scrim{transition:none}}
+/* ---- design pass (2026-11-25, from the user's reference screens): Geist, lighter weights, flat cards. Same colours. ---- */
+body{font-family:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;letter-spacing:-.005em}
+.mono{font-family:"Geist Mono",ui-monospace,"Cascadia Mono",monospace}
+h1{font-weight:500;letter-spacing:-.025em}
+h1.vh{font-size:28px;margin:8px 0 4px}
+h1.brand{font-weight:500}
+h2,h3{font-weight:500}
+.sub{font-size:14px}
+.panel,details,.stub,.card,.sheet{border-radius:14px}
+.card{padding:20px}
+.card.acc:before{display:none}
+.lbl{font-size:11px;font-weight:500;letter-spacing:.16em}
+.num{font-weight:450;letter-spacing:-.03em}
+.kpis .num{font-size:30px}
+.mc-v{font-weight:450}
+.trend{font-weight:400}
+label,th{letter-spacing:.12em;font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;font-weight:500;font-size:14px;padding:9px 16px}
+.btn.sm{font-size:13px;padding:7px 12px}
+input,select,textarea{border-radius:8px;font-size:14px}
+.pill{font-weight:500}
+.tb-t{font-weight:500}
+.nv-i{font-size:15px}
+.nv-h b{font-weight:500}
+.sh-t{margin:0 0 14px;font-weight:500;font-size:18px}
+/* ---- tickets page ---- */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ph .btn{margin-top:12px}
+#tkpis{margin-top:18px}
+.srch{display:flex;flex-direction:row;align-items:center;gap:10px;margin-top:16px;padding:0 14px;background:var(--surf);border:1px solid var(--line);border-radius:10px;color:var(--mute);text-transform:none;letter-spacing:0;font-weight:400}
+.srch svg{flex:none}
+.srch input{border:0;background:transparent;padding:11px 0;border-radius:0}
+.srch input:focus{outline:none}
+.srch:focus-within{border-color:var(--acc)}
+.ftabs{display:flex;gap:4px;flex-wrap:wrap;margin-top:16px}
+.ftabs button{font:inherit;font-size:13px;font-weight:500;border:0;background:none;color:var(--mute);padding:7px 14px;border-radius:8px;cursor:pointer}
+.ftabs button:hover{color:var(--ink)}
+.ftabs button[aria-pressed="true"]{background:var(--acc);color:#fff}
+.sortrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 14px;font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{font:inherit;font-size:12.5px;font-weight:500;border:1px solid var(--line);background:var(--soft);color:var(--mute);padding:5px 10px;border-radius:7px;cursor:pointer}
+.chips button:hover{color:var(--ink)}
+.chips button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.cnt{margin-left:auto;color:var(--mute)}
+details.lot{margin-bottom:12px;overflow:hidden}
+details.lot>summary{padding:16px 20px;gap:14px;justify-content:flex-start}
+.chev{flex:none;color:var(--mute);transition:transform .2s ease-out}
+details.lot[open] .chev{transform:rotate(180deg)}
+.lt{flex:1;min-width:0}
+.lt-n{display:flex;align-items:center;gap:8px;min-width:0}
+.lt-n b{font-weight:500;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.lt>span{display:block;color:var(--mute);font-size:13px;margin-top:3px}
+.bdg{flex:none;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--mute)}
+.bdg.warn{color:#ff6b7a}.bdg.soon{color:var(--acc)}
+.lr{flex:none;display:flex;align-items:center;gap:16px}
+.li{text-align:right}
+.li b{display:block;font-weight:500;font-variant-numeric:tabular-nums}
+.li span{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.tk{background:var(--acc);color:#fff;font-size:13px;font-weight:500;padding:6px 14px;border-radius:999px;white-space:nowrap}
+.lb{border-top:1px solid var(--line)}
+.tt{min-width:700px}
+.tt th{padding:12px 16px;font-size:10.5px;letter-spacing:.14em}
+.tt td{padding:11px 16px;font-size:14px;font-variant-numeric:tabular-nums}
+.tt th:first-child,.tt td:first-child{padding-left:20px}
+.tt th:last-child,.tt td:last-child{padding-right:20px}
+.tt th:nth-child(8),.tt td:nth-child(8),.tt th:nth-child(9),.tt td:nth-child(9){text-align:center}
+.tt td.mono{font-size:13px;color:var(--mute)}
+.tt tr:last-child td{border-bottom:0}
+.gck,.rck{width:16px;height:16px;margin:0;padding:0;flex:none;accent-color:var(--acc);cursor:pointer}
+.tt th.ck,.tt td.ck{width:44px;padding-right:0;text-align:left}
+.tt td.ck+td,.tt th.ck+th{padding-left:8px}
+.bulk{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:35;display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;width:max-content;max-width:calc(100% - 24px);padding:12px 14px;background:#161617;border:1px solid #2c2c30;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.6)}
+.bulk b{align-self:center;font-weight:500;white-space:nowrap}
+.bk-s{display:flex;align-items:flex-end;gap:8px}
+.bk-s label{width:140px}
+.bk-s input{padding:7px 9px;font-size:13px}
+@media (max-width:600px){.bulk{left:12px;right:12px;transform:none;width:auto}.bk-s{width:100%}.bk-s label{flex:1;width:auto}}
+.stp{display:inline-block;font-size:12px;font-weight:500;padding:4px 10px;border-radius:7px;border:1px solid transparent}
+.stp.stock{color:#ff9f40;background:rgba(255,159,64,.1);border-color:rgba(255,159,64,.35)}
+.stp.sold{color:var(--pos);background:rgba(52,210,123,.1);border-color:rgba(52,210,123,.3)}
+.ib{display:inline-grid;place-items:center;width:32px;height:32px;border:0;border-radius:8px;background:none;color:var(--mute);cursor:pointer}
+.ib:hover{background:var(--soft);color:var(--ink)}
+.ib.del:hover{color:var(--neg)}.ib.ok{color:var(--pos)}.ib.ok:hover{background:rgba(52,210,123,.12);color:var(--pos)}
+.tst,.pst{width:auto;-webkit-appearance:none;appearance:none;font:inherit;font-size:12px;font-weight:500;padding:4px 26px 4px 10px;border-radius:7px;border:1px solid;cursor:pointer;background-repeat:no-repeat;background-position:right 8px center;background-size:10px}
+.tst.stock,.pst.stock{color:#ff9f40;background-color:rgba(255,159,64,.1);border-color:rgba(255,159,64,.35);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ff9f40' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")}
+.tst.sold,.pst.sold{color:var(--pos);background-color:rgba(52,210,123,.1);border-color:rgba(52,210,123,.3);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2334d27b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")}
+.tst option,.pst option{color:var(--ink);background:#141415}
+.tst:hover,.pst:hover{filter:brightness(1.15)}
+.selling td{background:rgba(255,46,136,.04)}
+.selling input{width:140px;padding:6px 8px;font-size:13px;text-align:right}
+.lnote{margin:0;padding:14px 20px 0;color:var(--mute);font-size:13px;white-space:pre-wrap}
+.lf{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:12px;padding:14px 20px 16px;border-top:1px solid var(--line)}
+.lf .sf{margin:0;flex:0 1 auto}
+.lf .sf label{flex:0 1 150px}
+.la{display:flex;align-items:center;gap:4px}
+.trs{width:auto;padding:7px 10px;font-size:13px;margin-right:6px}
+@media (max-width:600px){details.lot>summary{padding:14px;gap:10px;flex-wrap:wrap}.lr{width:100%;justify-content:space-between;padding-left:52px}.li{text-align:left}.lt-n{flex-wrap:wrap}.lf{padding:14px}.tt th:first-child,.tt td:first-child{padding-left:14px}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+/* ---- tickets header: Sync / Review / Export / Import / Add New ---- */
+.ph-a{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ph .ph-a .btn{margin-top:0}
+.dd{position:relative}
+.dd-c{opacity:.6;transition:transform .15s ease-out}
+[aria-expanded="true"] .dd-c{transform:rotate(180deg)}
+.menu{position:absolute;left:0;top:calc(100% + 6px);z-index:40;min-width:250px;padding:6px;background:#161617;border:1px solid #2c2c30;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.6)}
+.menu.r{left:auto;right:0}
+.menu button{display:block;width:100%;padding:10px 12px;border:0;border-radius:8px;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.menu button+button{margin-top:2px}
+.menu button:hover,.menu button:focus-visible{background:var(--soft)}
+.menu b{display:block;font-weight:500;font-size:14px}
+.menu span{display:block;margin-top:2px;font-size:12px;color:var(--mute)}
+.cbadge{min-width:20px;padding:1px 7px;border-radius:999px;background:var(--acc);color:#fff;font-size:11px;font-weight:600;text-align:center}
+/* ---- review emails ---- */
+.wrap.wide{max-width:760px}
+.rv-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.rv{margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#0f0f10}
+.rv-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.rv-tt{min-width:0}
+.rv-tt b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-tt span{display:block;margin-top:2px;font-size:12px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-t{width:auto;flex:none;padding:6px 10px;font-size:13px}
+.rv-s{margin:10px 0 12px;font-size:13px;color:var(--mute);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rv[data-t="purchase"] .rv-sl,.rv[data-t="sale"] .rv-p{display:none}
+.rv-n{margin:10px 0 0;font-size:12.5px;color:var(--mute)}
+.rv-n.warn{color:#ff9f40}
+@media (max-width:600px){.ph-a{width:100%}.rv-h{flex-direction:column}}
+@media (prefers-reduced-motion:reduce){.dd-c{transition:none}}
+/* ---- pulling page ---- */
+#pkpis{margin-top:18px}
+.num.warn{color:#ff9f40}
+.fbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+.fbar .srch{flex:1 1 280px;margin-top:0}
+.fbar select{width:auto;padding:10px 12px;font-size:13px;background:var(--surf)}
+.ptw{padding:0;overflow-x:auto}
+.ptt{min-width:780px}
+.ptt th,.ptt td{text-align:left;padding:14px 16px;vertical-align:middle}
+.ptt th{font-size:10.5px;letter-spacing:.14em;padding-top:16px;padding-bottom:12px}
+.ptt th.ck,.ptt td.ck{width:44px;padding-left:20px;padding-right:0}
+.ptt .r{text-align:right}.ptt .c{text-align:center}.ptt .nw{white-space:nowrap}
+.ptt tr:last-child td{border-bottom:0}
+.ptt td{font-size:14px}
+.pcl{font-weight:500}
+.pit{white-space:normal!important;min-width:200px}
+.pit b{display:block;font-weight:500}
+.pit span{display:block;font-size:12.5px;color:var(--mute);margin-top:2px}
+.pit .pn2{font-size:12px;opacity:.8}
+.pck,.pck-all{width:16px;height:16px;margin:0;accent-color:var(--acc);cursor:pointer}
+@media (max-width:600px){.fbar select{flex:1}}
+/* ---- compact pass (2026-11-25): smaller boxes, more on one screen ---- */
+main{padding-top:14px}
+h1.vh{font-size:24px;margin:4px 0 2px}
+.sub{font-size:13px;margin-bottom:0}
+.card{padding:14px 16px}
+.kpis{gap:10px}
+.kpis .card{padding:12px 16px}
+.kpis .num{font-size:24px;margin:6px 0 2px}
+.kpis .trend{font-size:12.5px}
+.lbl{font-size:10.5px}
+#tkpis,#pkpis{margin-top:12px}
+.ph .ph-a{margin-top:6px}
+.btn{padding:7px 13px;font-size:13px}
+.srch{margin-top:12px}.srch input{padding:8px 0}
+.fbar{margin:12px 0}.fbar select{padding:8px 10px}
+.ftabs{margin-top:10px}.ftabs button{padding:5px 12px}
+.sortrow{margin:10px 0 8px}
+details.lot{margin-bottom:8px}
+details.lot>summary{padding:10px 16px;gap:12px}
+.lt-n b{font-size:14px}
+.lt>span{font-size:12.5px;margin-top:1px}
+.lt-d{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)!important;opacity:.75}
+.li b{font-size:14px}
+.tk{padding:4px 12px;font-size:12.5px}
+.tt th{padding:9px 14px}.tt td{padding:7px 14px;font-size:13.5px}
+.tt th:first-child,.tt td:first-child{padding-left:16px}
+.lnote{padding:10px 16px 0;color:var(--ink);font-size:13px}
+.lnote .lbl{display:block;margin-bottom:3px}
+.lf{margin-top:8px;padding:10px 16px 12px}
+.ptt th,.ptt td{padding:8px 14px}
+.ptt th{padding-top:11px;padding-bottom:9px}
+.ptt th.ck,.ptt td.ck{padding-left:16px}
+.pno{white-space:normal!important;min-width:180px;max-width:340px;font-size:13px;color:var(--ink);opacity:.8}
+.ptt{min-width:900px}
+.tst,.pst{padding:3px 24px 3px 9px}
+.ib{width:28px;height:28px}
+#dash .mc-ch{min-height:180px}
+.ev-li li{padding:9px 0}
+@media (max-width:719px){.kpis .card{padding:11px 13px}.kpis .num{font-size:clamp(19px,5.8vw,24px)}}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -218,7 +464,7 @@ main{max-width:none;padding:12px 12px 24px}
 </header>
 <div class="scrim" id="scrim"></div>
 <nav class="nav" id="nav" aria-label="Menu" tabindex="-1" style="outline:none" inert>
-<div class="nv-h"><img src="icons/icon-192.png" alt=""><div><b>Ticket tracker</b><span>v3</span></div></div>
+<div class="nv-h"><img src="icons/icon-192.png" alt=""><div><b>OOS</b><span>Ticket tracker</span></div></div>
 <div class="nv-b">
 <p class="nv-l">Overview</p>
 <button class="nv-i" data-nav="dash" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>Dashboard</button>
@@ -235,65 +481,63 @@ main{max-width:none;padding:12px 12px 24px}
 <section class="view" data-view="dash">
 <header>
 <div class="eyebrow"><i class="dot" id="dot"></i><span id="sync">Starting…</span></div>
-<h1>Ticket tracker</h1>
-<p class="sub">Buy a group of tickets once, then log each sale on its own date.</p>
+<h1 class="brand" aria-label="OOS"><span aria-hidden="true">O</span><span class="mac" aria-hidden="true">O</span><span aria-hidden="true">S</span></h1>
 </header>
-
-<section class="card" id="dash" aria-label="Profit chart">
-<div class="ch-head"><div><div class="lbl">Profit</div><div class="num" id="kpi"></div><div class="mu" id="kpisub" style="font-size:15px"></div></div><div class="ch-side" id="chside"></div></div>
-<div class="row" style="margin-top:16px"><div class="seg" id="ser" aria-label="Which graph"><button data-s="all" type="button">All lines</button><button data-s="t" type="button"><i class="sw" style="background:#ff2e88"></i>Tickets</button><button data-s="p" type="button"><i class="sw" style="background:#ececef"></i>Pulling</button><button data-s="a" type="button"><i class="sw" style="background:#4d8dff"></i>Combined</button></div>
-<div class="seg" id="rng"><button data-r="7d" type="button">7 days</button><button data-r="month" type="button">Month</button><button data-r="all" type="button">All</button></div>
-<label class="tg" style="margin-left:auto"><input type="checkbox" id="cum">Running total</label></div>
-<div class="row" id="mnav" style="justify-content:center;gap:8px"><button class="btn ghost sm" id="pm" type="button" aria-label="Previous month">‹</button><input type="month" id="mi" style="width:auto;min-width:170px"><button class="btn ghost sm" id="nm" type="button" aria-label="Next month">›</button></div>
-<div class="cw" id="cw"><div id="chart"></div><div class="tip" id="tip" hidden></div></div>
-<div id="leg" style="margin-top:8px"></div>
-</section>
 <div class="kpis" id="kpis"></div>
+
+<!-- metric card: plain-JS port of Kokonut UI's metric-card (MIT, @dorianbaffier, kokonutui.com) -->
+<section class="card mc" id="dash" aria-label="Profit">
+<div class="mc-h"><p class="lbl mc-l" id="mcl">Profit</p><div class="mc-per" id="mcper"><span class="mc-pill" aria-hidden="true"></span><button data-p="7" type="button">7D</button><button data-p="30" type="button">30D</button><button data-p="90" type="button">90D</button></div></div>
+<p class="mc-v" id="mcvw"><span class="vh-sr" id="mcsr"></span><span class="mc-n" id="mcv" aria-hidden="true"></span></p>
+<div class="mc-d"><span id="mcd"></span><span class="mc-cap" id="mccap" aria-live="polite"></span><button class="mc-clr" id="mcclr" type="button" hidden>Clear</button></div>
+<div class="mc-ch" id="mcch" role="slider" tabindex="0" aria-valuemin="1">
+<svg viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="mclip"><rect id="mclr" x="0" y="-10" width="400" height="140"/></clipPath></defs>
+<line class="mc-base" x1="0" x2="400" y1="119.5" y2="119.5" vector-effect="non-scaling-stroke"/>
+<path id="mcp" class="mc-prev" vector-effect="non-scaling-stroke"/>
+<path id="mca" clip-path="url(#mclip)"/>
+<path id="mcdim" vector-effect="non-scaling-stroke"/>
+<path id="mcc" clip-path="url(#mclip)" vector-effect="non-scaling-stroke"/>
+</svg>
+<div class="mc-ov" id="mcov"></div><i class="mc-end" id="mcend"></i>
+</div>
+<div class="mc-ax"><span id="mcf"></span><span class="mc-pp"><i></i>Previous period</span><span id="mct"></span></div>
+<div class="mc-bd"><div class="mc-bar" id="mcbar" aria-hidden="true"><i data-i="0" style="background:#ff2e88"></i><i data-i="1" style="background:#ececef"></i></div>
+<ul class="mc-li" id="mcli"><li><button data-i="0" type="button"><i class="sw" style="background:#ff2e88"></i><span class="nm">Tickets</span><span class="vl"></span><span class="sh"></span></button></li><li><button data-i="1" type="button"><i class="sw" style="background:#ececef"></i><span class="nm">Pulling</span><span class="vl"></span><span class="sh"></span></button></li></ul></div>
+</section>
+<section class="card ev" id="evs" aria-label="Upcoming events"><div class="ev-h"><p class="lbl" style="margin:0">Upcoming events</p><span class="pill" id="evc"></span></div><ul class="ev-li" id="evl"></ul></section>
 </section>
 
 <section class="view" id="p1" data-view="tickets" hidden>
-<h1 class="vh">Tickets</h1>
-<p class="sub">Add a group of tickets, then log each sale on its own date.</p>
-<form class="panel" id="lf" onsubmit="return false">
-<div class="grid">
-<label>Event<input id="ev" required></label>
-<label>Event date<input id="ed" type="date" required></label>
-<label>Tickets bought<input id="q" type="number" min="1" step="1" value="2" required></label>
-<label>Cost per ticket (€)<input id="cp" type="number" min="0" step="0.01" required></label>
-<label>Sector<input id="sec"></label>
-<label>Row<input id="rw"></label>
-<label>Seats<input id="se"></label>
-<label>Transfer status<select id="tr"><option value="no">Not transferred yet</option><option value="pending">Pending transfer</option><option value="yes">Transferred</option></select></label><label style="grid-column:1/-1">Notes<textarea id="nt" rows="2" placeholder="Platform, account, seat details…"></textarea></label>
-</div>
-<div class="row"><button class="btn" id="addlot" type="button">Add tickets</button></div>
-</form>
-<div id="pend"></div>
-<div class="grid" style="margin:16px 0 12px">
-<label>Search<input id="fl" placeholder="Event, notes or sector"></label>
-<label>Transfer<select id="ft"><option value="all">All</option><option value="no">Not transferred yet</option><option value="pending">Pending transfer</option><option value="yes">Transferred</option></select></label>
-<label>Sales<select id="fs"><option value="all">All</option><option value="open">Unsold left</option><option value="done">Fully sold</option></select></label>
-<label>Event from<input id="ff" type="date"></label>
-<label>Event to<input id="fe" type="date"></label>
-</div>
+<div class="ph"><div><h1 class="vh">Tickets</h1><p class="sub">Manage your ticket groups, sales and transfers.</p></div>
+<div class="ph-a">
+<div class="dd"><button class="btn ghost" data-dd="m-sync" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>Sync<svg class="dd-c" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+<div class="menu" id="m-sync" hidden><button data-a="ms" type="button"><b>Sync ticket emails</b><span id="msl">Search Gmail for ticket emails</span></button><button data-a="mk" type="button"><b>Search keywords</b><span id="mkl"></span></button></div></div>
+<button class="btn ghost" data-a="rv" type="button">Review<span class="cbadge" id="rvn" hidden></span></button>
+<div class="dd"><button class="btn ghost" data-dd="m-exp" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>Export<svg class="dd-c" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+<div class="menu r" id="m-exp" hidden><button data-a="x4" type="button"><b>Backup (JSON)</b><span>Everything, to restore later</span></button><button data-a="x1" type="button"><b>Tickets CSV</b><span>One row per sale</span></button><button data-a="x2" type="button"><b>Pulling CSV</b><span>All pulling sales</span></button><button data-a="x3" type="button"><b>Monthly P&amp;L CSV</b><span>Profit per month</span></button></div></div>
+<button class="btn ghost" data-a="im" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 19.5h14"/></svg>Import</button>
+<button class="btn" data-a="nl" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Add New</button></div></div>
+<div class="kpis" id="tkpis"></div>
+<label class="srch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="fl" type="search" placeholder="Search events, notes or sector…" aria-label="Search tickets"></label>
+<div class="ftabs" id="ftab" aria-label="Show"><button data-f="all" type="button">All</button><button data-f="stock" type="button">In Stock</button><button data-f="sold" type="button">Sold</button><button data-f="tr" type="button">Transferred</button></div>
+<div class="sortrow"><span class="mu">Sort by:</span><div class="chips" id="fsort"><button data-s="date" type="button">Event date</button><button data-s="name" type="button">Name</button><button data-s="inv" type="button">Invested</button><button data-s="profit" type="button">Profit</button><button data-s="roi" type="button">ROI</button></div><span class="cnt" id="lcount"></span></div>
 <div id="lots"></div>
+<div class="bulk" id="bulk" hidden><b id="bkn"></b><div class="bk-s"><label>Sold on<input type="date" id="bkd"></label><label>Price each (€)<input type="number" id="bkp" min="0" step="0.01" placeholder="€"></label><button class="btn sm" data-a="bs" type="button">Mark sold</button></div><button class="btn ghost sm" data-a="bu" type="button">Mark in stock</button><button class="btn ghost sm" data-a="bc" type="button">Clear</button></div>
 </section>
 
 <section class="view" id="p2" data-view="pulling" hidden>
-<h1 class="vh">Pulling</h1>
-<p class="sub">Log the profit from tickets you pull for clients.</p>
-<form class="panel" id="pf" onsubmit="return false">
-<div class="grid">
-<label>Date<input id="pd" type="date" required></label>
-<label>Client<input id="pc"></label>
-<label>Event<input id="pe" required></label>
-<label>Event date<input id="pv" type="date"></label>
-<label>Tickets<input id="pq" type="number" min="1" step="1" value="2"></label>
-<label>Profit (€)<input id="pp" type="number" step="0.01" required></label>
-<label>Notes<input id="pn"></label>
-</div>
-<div class="row"><label style="flex-direction:row;align-items:center;gap:6px"><input id="pt" type="checkbox" style="width:auto">Transferred</label><button class="btn" id="addpull" type="button">Add pulling sale</button></div>
-</form>
-<div class="panel tw" id="pulls" style="margin-top:14px"></div>
+<div class="ph"><div><h1 class="vh">Pulling</h1><p class="sub">Track the tickets you pull for clients.</p></div>
+<div class="ph-a">
+<div class="dd"><button class="btn ghost" data-dd="m-pexp" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>Export<svg class="dd-c" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+<div class="menu r" id="m-pexp" hidden><button data-a="x2" type="button"><b>Pulling CSV</b><span>All pulling sales</span></button><button data-a="x4" type="button"><b>Backup (JSON)</b><span>Everything, to restore later</span></button></div></div>
+<button class="btn ghost" data-a="im" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 19.5h14"/></svg>Import</button>
+<button class="btn" data-a="np" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Add New</button></div></div>
+<div class="kpis" id="pkpis"></div>
+<div class="fbar"><label class="srch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="pfl" type="search" placeholder="Search client, event or notes…" aria-label="Search pulling sales"></label>
+<select id="pst" aria-label="Status"><option value="all">All status</option><option value="yes">Transferred</option><option value="no">Not transferred</option></select>
+<select id="pmo" aria-label="Month"><option value="all">All months</option></select></div>
+<div class="card ptw tw" id="pulls"></div>
+<div class="bulk" id="pbulk" hidden><b id="pbn"></b><button class="btn sm" data-a="pbt" type="button">Mark transferred</button><button class="btn ghost sm" data-a="pbu" type="button">Mark not transferred</button><button class="btn ghost sm" data-a="pbc" type="button">Clear</button></div>
 </section>
 <section class="view" data-view="data" hidden>
 <h1 class="vh">Data &amp; export</h1>
@@ -325,8 +569,10 @@ main{max-width:none;padding:12px 12px 24px}
 <script>
 const $=id=>document.getElementById(id);
 const KEY="ticket-ledger-v2",META="ticket-ledger-meta";
-let S={lots:[],pulls:[]},rev=0,pending=false;
-try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&Array.isArray(d.lots))S={lots:d.lots,pulls:d.pulls||[]}}catch(e){}
+const mk=d=>({lots:d.lots||[],pulls:d.pulls||[],mail:Array.isArray(d.mail)?d.mail:[],seen:Array.isArray(d.seen)?d.seen:[],mailAt:d.mailAt||"",mailKw:Array.isArray(d.mailKw)?d.mailKw:[]});
+const whole=()=>({lots:S.lots,pulls:S.pulls,mail:S.mail,seen:S.seen,mailAt:S.mailAt,mailKw:S.mailKw});
+let S=mk({}),rev=0,pending=false;
+try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&Array.isArray(d.lots))S=mk(d)}catch(e){}
 try{const m=JSON.parse(localStorage.getItem(META)||"null");if(m){rev=+m.rev||0;pending=!!m.pending}}catch(e){}
 const norm=()=>S.lots.forEach(l=>{if(!l.transfer)l.transfer=l.transferred?"yes":"no"});norm();
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
@@ -349,11 +595,11 @@ function persist(){rev=Date.now();pending=true;saveLocal();if(!user){idle();retu
 async function push(){
 if(!user||!pending||!navigator.onLine){idle();return}
 const r=rev;
-const {error}=await sb.from("ledgers").upsert({user_id:user.id,data:{lots:S.lots,pulls:S.pulls},rev:r,updated_at:new Date().toISOString()});
+const {error}=await sb.from("ledgers").upsert({user_id:user.id,data:whole(),rev:r,updated_at:new Date().toISOString()});
 if(error){stat("Couldn’t sync; saved on this device.",1);return}
 if(rev===r){pending=false;saveLocal()}
 idle()}
-function takeRemote(row){const d=row.data||{};rev=+row.rev||0;pending=false;S={lots:d.lots||[],pulls:d.pulls||[]};norm();saveLocal();render()}
+function takeRemote(row){const d=row.data||{};rev=+row.rev||0;pending=false;S=mk(d);norm();saveLocal();render()}
 async function pull(){
 if(!user)return;
 const {data,error}=await sb.from("ledgers").select("data,rev").eq("user_id",user.id).maybeSingle();
@@ -385,7 +631,7 @@ $("ain").onclick=()=>go(false);$("aup").onclick=()=>go(true)}
 async function seed(){
 if(S.lots.length||S.pulls.length)return;
 try{const r=await fetch("ledger.json",{cache:"no-store"});if(!r.ok)return;const d=await r.json();
-if(d&&Array.isArray(d.lots)){S={lots:d.lots,pulls:d.pulls||[]};norm();saveLocal();render();note("Loaded "+S.lots.length+" ticket groups and "+S.pulls.length+" pulling sales from ledger.json.")}}catch(e){}}
+if(d&&Array.isArray(d.lots)){S=mk(d);norm();saveLocal();render();note("Loaded "+S.lots.length+" ticket groups and "+S.pulls.length+" pulling sales from ledger.json.")}}catch(e){}}
 async function boot(){
 await seed();renderAcct();idle();
 if(!sb)return;
@@ -448,7 +694,106 @@ return `<div class="rx-bar"><span class="rx-eye">Artist recap</span><button clas
 <div class="rx-b"><div><span class="rx-pk" style="font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase">Seat · ROI</span><div class="rx-roi${roi<0?" neg":""}">${roi<0?"−":"+"}${Math.round(Math.abs(roi))} %</div><span class="mu">return on investment</span></div>
 <div><div class="rx-bc">${bars}</div><div class="rx-code">${code}</div></div></div></div>
 <div class="rx-iss">Issued ${dmy(today())}</div>`}
-const editForm=l=>`<div class="sheet"><h3 style="margin:0 0 14px">Edit ${esc(l.event)}</h3><div class="ef"><div class="grid">
+let ltab="all",lsort="date",adding=false,sellRow=null;const selT=new Set();
+/* set ticket rows back to in stock; other tickets of a touched sale keep their rows as 1-ticket sales */
+function unsellRows(lot,rows){const slots=slotSales(lot),hit=new Set(rows.map(i=>slots[i]).filter(Boolean));
+hit.forEach(s=>{const keep=slots.map((x,j)=>x===s&&!rows.includes(j)?j:-1).filter(j=>j>=0);lot.sales=lot.sales.filter(x=>x!==s).concat(keep.map(j=>({id:uid(),date:s.date,qty:1,price:s.price,fee:s.fee||0,seat:j})))})}
+/* which sale each ticket row shows: a sale saved from a row (qty 1 + seat index) keeps that row; the rest fill free rows, oldest sale first */
+function slotSales(l){const out=new Array(l.qty).fill(null),rest=[];
+l.sales.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(s=>{if(s.qty===1&&Number.isInteger(s.seat)&&s.seat>=0&&s.seat<l.qty&&!out[s.seat])out[s.seat]=s;else rest.push(s)});
+let k=0;rest.forEach(s=>{for(let n=0;n<s.qty;n++){while(k<l.qty&&out[k])k++;if(k<l.qty)out[k]=s}});return out}
+const IC={check:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+x:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+chev:'<svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>',
+pen:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>',
+trash:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/></svg>',
+recap:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5a1 1 0 0 1 1-1h15a1 1 0 0 1 1 1V10a2 2 0 0 0 0 4v2.5a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V14a2 2 0 0 0 0-4z"/><path d="M14.5 7v10" stroke-dasharray="2 2.2"/></svg>',
+warn:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4 2.5 20h19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg>'};
+const eur=n=>money(n).replace(/\.00$/,"");
+const clean=v=>{v=String(v==null?"":v).trim();return /^(idk|-+|\?+|n\/?a|tbc)$/i.test(v)?"":v};
+/* one label per ticket: "sector · row · seat" when known, else "Ticket n" */
+function seatList(l){const s=clean(l.seats),m=s.match(/^(\d+)\s*[-–]\s*(\d+)$/);let a=[];
+if(m){const lo=Math.min(+m[1],+m[2]),hi=Math.max(+m[1],+m[2]);for(let i=lo;i<=hi;i++)a.push(String(i))}else if(s)a=s.split(/[,;\/\s]+/).filter(Boolean);
+const pre=[clean(l.sector),clean(l.row)].filter(Boolean);
+return Array.from({length:l.qty},(_,i)=>{const seat=a.length===l.qty?a[i]:s;const p=pre.concat(seat?[seat]:[]);return p.length?p.join(" · "):"Ticket "+(i+1)})}
+const addForm=()=>`<div class="sheet"><h3 class="sh-t">Add tickets</h3><form class="ef" id="lf" onsubmit="return false"><div class="grid">
+<label>Event<input id="ev" required></label>
+<label>Event date<input id="ed" type="date" required></label>
+<label>Tickets bought<input id="q" type="number" min="1" step="1" value="2" required></label>
+<label>Cost per ticket (€)<input id="cp" type="number" min="0" step="0.01" required></label>
+<label>Sector<input id="sec"></label>
+<label>Row<input id="rw"></label>
+<label>Seats<input id="se" placeholder="e.g. 6-10"></label>
+<label>Transfer status<select id="tr"><option value="no">Not transferred yet</option><option value="pending">Pending transfer</option><option value="yes">Transferred</option></select></label>
+<label style="grid-column:1/-1">Notes<textarea id="nt" rows="2" placeholder="Platform, account, seat details…"></textarea></label></div>
+<div class="row"><button class="btn sm" data-a="al" type="button">Add tickets</button><button class="btn ghost sm" data-a="cl" type="button">Cancel</button></div></form></div>`;
+/* ---- email sync (Gmail via the Supabase Edge Function "mail-sync") + review ---- */
+let reviewing=false,kwEdit=false,syncing=false,pulling=null;const selP=new Set();
+const pullForm=p=>{p=p||{};return `<div class="sheet"><h3 class="sh-t">${p.id?"Edit pulling sale":"Add pulling sale"}</h3><form class="ef" id="pf" onsubmit="return false"><div class="grid">
+<label>Date<input id="pd" type="date" required value="${esc(p.date||today())}"></label>
+<label>Client<input id="pc" value="${esc(p.client)}"></label>
+<label style="grid-column:1/-1">Event<input id="pe" required value="${esc(p.event)}"></label>
+<label>Event date<input id="pv" type="date" value="${esc(p.eventDate)}"></label>
+<label>Tickets<input id="pq" type="number" min="1" step="1" value="${p.id?(p.qty||""):2}"></label>
+<label>Profit (€)<input id="pp" type="number" step="0.01" required value="${p.id?p.profit:""}"></label>
+<label>Status<select id="pt"><option value="no" ${p.transferred?"":"selected"}>Not transferred</option><option value="yes" ${p.transferred?"selected":""}>Transferred</option></select></label>
+<label style="grid-column:1/-1">Notes<textarea id="pn" rows="2">${esc(p.notes)}</textarea></label></div>
+<div class="row"><button class="btn sm" data-a="sp" type="button">${p.id?"Save changes":"Add pulling sale"}</button><button class="btn ghost sm" data-a="cl" type="button">Cancel</button></div></form></div>`};
+/* header dropdowns (Sync, Export): one open at a time, close on outside click or Esc */
+const closeMenus=()=>document.querySelectorAll(".menu").forEach(m=>{m.hidden=true;const b=document.querySelector(`[data-dd="${m.id}"]`);if(b)b.setAttribute("aria-expanded","false")});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-dd]");if(t){const m=document.getElementById(t.dataset.dd),o=m.hidden;closeMenus();m.hidden=!o;t.setAttribute("aria-expanded",String(o));return}if(!e.target.closest(".menu"))closeMenus()});
+addEventListener("keydown",e=>{if(e.key==="Escape")closeMenus()});
+const MAIL_KW=["ticket","tickets","order confirmation","sold","vstupenky","objednavka"];
+const kwList=()=>Array.isArray(S.mailKw)&&S.mailKw.length?S.mailKw:MAIL_KW;
+const words2=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").split(/[^a-z0-9]+/).filter(w=>w.length>2);
+/* the ticket group whose name shares the most words with the email's event (groups with unsold tickets first) */
+function bestLot(ev){const w=new Set(words2(ev));let best=null,sc=-1;
+S.lots.forEach(l=>{const s=words2(l.event).filter(x=>w.has(x)).length*10+(soldQ(l)<l.qty?5:0);if(s>sc){sc=s;best=l}});return best}
+/* price per ticket in € from a guess; CZK is converted at the app's rate, other currencies are flagged */
+const eachEur=g=>!g.each?"":g.currency==="CZK"?Math.round(g.each/CZK*100)/100:g.each;
+function curNote(g){if(!g.total||g.currency==="EUR")return"";
+return g.currency==="CZK"?`<p class="rv-n">Amount was ${sp(g.total)} Kč, converted at ${CZK} Kč/€. Check it.</p>`:`<p class="rv-n warn">Amount is in ${esc(g.currency)} (${g.total}), so convert the price to €.</p>`}
+function rvCard(m){const g=m.guess||{},t=g.type==="sale"?"sale":"purchase",bl=bestLot(g.event),day=(m.date||"").slice(0,10)||today();
+const opts=S.lots.slice().sort((a,b)=>(a.eventDate||"9").localeCompare(b.eventDate||"9")).map(l=>`<option value="${l.id}" ${bl&&bl.id===l.id?"selected":""}>${esc(l.event)} · ${l.eventDate?dmy(l.eventDate):"no date"} · ${l.qty-soldQ(l)} unsold</option>`).join("");
+return `<div class="rv" data-m="${esc(m.id)}" data-t="${t}"><div class="rv-h"><div class="rv-tt"><b>${esc(m.subject||"(no subject)")}</b><span>${esc(m.from)} · ${m.date?dmy(m.date.slice(0,10)):""}</span></div>
+<select class="rv-t" aria-label="What is this email"><option value="purchase" ${t==="purchase"?"selected":""}>New tickets</option><option value="sale" ${t==="sale"?"selected":""}>Sale</option></select></div>
+<p class="rv-s">${esc(m.snippet)}</p>
+<div class="grid rv-p"><label style="grid-column:1/-1">Event<input class="v-e" value="${esc(g.event)}"></label><label>Event date<input class="v-d" type="date" value="${esc(g.eventDate)}"></label><label>Tickets bought<input class="v-q" type="number" min="1" step="1" value="${g.qty||1}"></label><label>Cost per ticket (€)<input class="v-k" type="number" min="0" step="0.01" value="${eachEur(g)}"></label><label>Sector<input class="v-s" value="${esc(g.sector)}"></label><label>Row<input class="v-r" value="${esc(g.row)}"></label><label>Seats<input class="v-se" value="${esc(g.seats)}"></label></div>
+<div class="grid rv-sl"><label style="grid-column:1/-1">Ticket group<select class="v-l">${opts||'<option value="">No ticket groups yet</option>'}</select></label><label>Sale date<input class="v-sd" type="date" value="${esc(day)}"></label><label>Tickets sold<input class="v-sq" type="number" min="1" step="1" value="${g.qty||1}"></label><label>Price each (€)<input class="v-sp" type="number" min="0" step="0.01" value="${eachEur(g)}"></label></div>
+${curNote(g)}<div class="row"><button class="btn sm" data-a="ra" type="button">Add</button><button class="btn ghost sm" data-a="ri" type="button">Ignore</button></div></div>`}
+const rvEmpty='<div class="empty">Nothing to review. Use Sync → Sync ticket emails to look for new ones.</div>';
+const reviewSheet=()=>`<div class="sheet"><div class="rv-top"><h3 class="sh-t" style="margin:0">Review emails <span class="mu" id="rvc">${S.mail.length}</span></h3><button class="btn ghost sm" data-a="cl" type="button">Close</button></div>
+<p class="sub" style="margin:6px 0 0;font-size:13px">The app guessed these from your ticket emails. Fix anything that's off, then Add or Ignore. Nothing is added until you click Add.</p>
+<div id="rvl">${S.mail.length?S.mail.map(rvCard).join(""):rvEmpty}</div></div>`;
+const kwSheet=()=>`<div class="sheet"><h3 class="sh-t">Search keywords</h3><p class="sub" style="font-size:13px;margin:0 0 12px">Sync looks for emails whose <b>subject</b> contains any of these words. One per line. Accents are ignored.</p>
+<textarea id="kwt" rows="7">${esc(kwList().join("\n"))}</textarea><div class="row"><button class="btn sm" data-a="kws" type="button">Save</button><button class="btn ghost sm" data-a="kwr" type="button">Reset to default</button><button class="btn ghost sm" data-a="cl" type="button">Cancel</button></div></div>`;
+function rvDone(card,msg){const id=card.dataset.m;S.mail=S.mail.filter(m=>m.id!==id);if(!S.seen.includes(id))S.seen.push(id);if(S.seen.length>2000)S.seen=S.seen.slice(-2000);
+card.remove();const c=document.getElementById("rvc");if(c)c.textContent=S.mail.length;if(!S.mail.length){const l=document.getElementById("rvl");if(l)l.innerHTML=rvEmpty}persist();render();if(msg)note(msg)}
+function rvAdd(card){const v=c=>card.querySelector(c).value.trim();
+if(card.dataset.t==="purchase"){const q=+v(".v-q"),k=v(".v-k");
+if(!v(".v-e")||!v(".v-d")||!(q>=1)||k===""||+k<0){note("Fill in the event, event date, tickets bought and cost per ticket.",1);return}
+const m=S.mail.find(x=>x.id===card.dataset.m);
+S.lots.push({id:uid(),event:v(".v-e"),eventDate:v(".v-d"),qty:q,cost:+k,sector:v(".v-s"),row:v(".v-r"),seats:v(".v-se"),transfer:"no",notes:m?"From email: "+m.subject:"",sales:[]});rvDone(card,"Added "+q+" ticket"+(q===1?"":"s")+" for "+v(".v-e")+".")}
+else{const l=S.lots.find(x=>x.id===v(".v-l")),q=+v(".v-sq"),p=v(".v-sp");
+if(!l){note("Pick the ticket group this sale belongs to.",1);return}
+if(!v(".v-sd")||!(q>=1)||p===""||+p<0){note("Fill in the sale date, tickets sold and price each.",1);return}
+if(q>l.qty-soldQ(l)){note("That group only has "+(l.qty-soldQ(l))+" unsold ticket"+(l.qty-soldQ(l)===1?"":"s")+".",1);return}
+l.sales.push({id:uid(),date:v(".v-sd"),qty:q,price:+p});openIds.add(l.id);rvDone(card,"Sale added to "+l.event+".")}}
+async function mailSync(){
+if(syncing)return;
+if(!sb){note("Email sync needs Supabase. Set it up first (README → Email sync).",1);return}
+if(!user){note("Sign in on the Sync page first.",1);history.pushState(null,"","#sync");showView("sync");return}
+syncing=true;const lab=$("msl");lab.textContent="Searching Gmail…";
+try{const d=S.mailAt?new Date(S.mailAt+"T00:00:00"):null;if(d)d.setDate(d.getDate()-2);
+const {data,error}=await sb.functions.invoke("mail-sync",{body:{keywords:kwList(),since:d?ymd(d):null}});
+if(error){let m="";try{m=(await error.context.json()).error}catch(x){}throw new Error(m||error.message||"Email sync failed.")}
+const seen=new Set(S.seen),have=new Set(S.mail.map(m=>m.id)),fresh=(data.found||[]).filter(m=>!seen.has(m.id)&&!have.has(m.id));
+S.mail=fresh.concat(S.mail);S.mailAt=today();persist();
+note(fresh.length?"Found "+fresh.length+" new ticket email"+(fresh.length===1?"":"s")+".":"No new ticket emails.");
+if(fresh.length){reviewing=true;const o=document.getElementById("ov-review");if(o)o.remove()}render()}
+catch(e){note(String(e.message||e),1)}
+finally{syncing=false;render()}}
+const editForm=l=>`<div class="sheet"><h3 class="sh-t">Edit ${esc(l.event)}</h3><div class="ef"><div class="grid">
 <label>Event<input class="e-e" value="${esc(l.event)}"></label>
 <label>Event date<input class="e-d" type="date" value="${esc(l.eventDate)}"></label>
 <label>Tickets bought<input class="e-q" type="number" min="${Math.max(1,soldQ(l))}" step="1" value="${l.qty}"></label>
@@ -461,37 +806,75 @@ const editForm=l=>`<div class="sheet"><h3 style="margin:0 0 14px">Edit ${esc(l.e
 <p class="e-m" style="color:var(--neg);margin:10px 0 0;font-size:13px"></p>
 <div class="row"><button class="btn sm" data-a="sl" data-l="${l.id}" type="button">Save changes</button><button class="btn ghost sm" data-a="cl" type="button">Cancel</button></div></div></div>`;
 function render(){
-const f=$("fl").value.trim().toLowerCase(),fs=$("fs").value,ft=$("ft").value,ff=$("ff").value,fe=$("fe").value;
-const pn=S.lots.filter(l=>l.transfer==="pending").sort((a,b)=>(a.eventDate||"9").localeCompare(b.eventDate||"9"));
-$("pend").innerHTML=pn.length?`<div class="panel" style="margin-top:16px;border-color:#f08a24"><b style="color:#ff9f40">Pending transfer (${pn.length})</b>`+pn.map(l=>`<div class="kv" style="align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)"><span style="min-width:0"><b style="color:var(--ink)">${esc(l.event)}</b><br>Event ${fd(l.eventDate)} · ${l.qty} tickets${l.notes?" · "+esc(l.notes):""}</span><button class="btn t-yes sm" data-a="mt" data-l="${l.id}" type="button">Mark transferred</button></div>`).join("")+"</div>":"";
-const ls=S.lots.filter(l=>(!f||(l.event+" "+(l.notes||"")+" "+(l.sector||"")).toLowerCase().includes(f))&&(fs==="all"||(fs==="open")===(soldQ(l)<l.qty))&&(ft==="all"||l.transfer===ft)&&(!ff||(l.eventDate&&l.eventDate>=ff))&&(!fe||(l.eventDate&&l.eventDate<=fe))).sort((a,b)=>(a.eventDate||"9").localeCompare(b.eventDate||"9"));
+const f=$("fl").value.trim().toLowerCase(),td=today();
+$("ftab").querySelectorAll("[data-f]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.f===ltab)));
+$("fsort").querySelectorAll("[data-s]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.s===lsort)));
+const inv=l=>l.qty*l.cost,roiL=l=>{const c=soldQ(l)*l.cost;return c?lotProfit(l)/c:-Infinity};
+const SORTS={date:(a,b)=>(a.eventDate||"9").localeCompare(b.eventDate||"9"),name:(a,b)=>a.event.localeCompare(b.event),inv:(a,b)=>inv(b)-inv(a),profit:(a,b)=>lotProfit(b)-lotProfit(a),roi:(a,b)=>roiL(b)-roiL(a)};
+const ls=S.lots.filter(l=>(!f||(l.event+" "+(l.notes||"")+" "+(l.sector||"")).toLowerCase().includes(f))&&(ltab==="all"||(ltab==="stock"?soldQ(l)<l.qty:ltab==="sold"?soldQ(l)>=l.qty:l.transfer==="yes"))).sort(SORTS[lsort]||SORTS.date);
+[...selT].forEach(k=>{const[id,i]=k.split(":"),l=S.lots.find(x=>x.id===id);if(!l||+i>=l.qty)selT.delete(k)});
+$("lcount").textContent=ls.length+" event"+(ls.length===1?"":"s");
 $("lots").innerHTML=ls.length?ls.map(l=>{
-const sq=soldQ(l),rem=l.qty-sq,pr=lotProfit(l);
-const seat=[l.sector&&"Sec "+l.sector,l.row&&"Row "+l.row,l.seats&&"Seats "+l.seats].filter(Boolean).join(", ");
-return `<details data-l="${l.id}" ${openIds.has(l.id)?"open":""}><summary><div class="st"><b>${esc(l.event)}</b><span>Event ${fd(l.eventDate)} · ${l.qty} bought at ${money(l.cost)}</span>${l.notes?`<span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.notes)}</span>`:""}</div>
-<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;white-space:nowrap"><span class="pill ${l.transfer==="pending"?"pend":l.transfer==="yes"?"ok":"no"}">${TR[l.transfer]}</span><span><span class="pill">${sq}/${l.qty} sold</span> <b class="${pr>=0?"pos":"neg"}">${sq?money(pr):""}</b></span></div></summary>
-<div class="body"><div class="row" style="margin:0 0 10px;gap:6px"><span class="sub" style="margin:0 4px 0 0;font-size:13px">Transfer</span>${["no","pending","yes"].map(k=>`<button class="btn ${l.transfer===k?"t-"+k:"ghost"} sm" data-a="ts" data-v="${k}" data-l="${l.id}" type="button">${TR[k]}</button>`).join("")}</div>
-${seat?`<p class="sub" style="font-size:13px;margin-bottom:6px">${esc(seat)}</p>`:""}${l.notes?`<p style="white-space:pre-wrap;margin:0 0 10px;font-size:14px">${esc(l.notes)}</p>`:""}
-${l.sales.length?`<div class="tw"><table><thead><tr><th>Sale date</th><th>Qty</th><th>Sell each</th><th>Profit</th><th></th></tr></thead><tbody>${l.sales.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const p=s.qty*(s.price-l.cost);return `<tr><td>${fd(s.date)}</td><td>${s.qty}</td><td>${money(s.price)}</td><td class="${p>=0?"pos":"neg"}"><b>${money(p)}</b></td><td><button class="x" data-a="ds" data-l="${l.id}" data-s="${s.id}" aria-label="Delete sale" title="Delete sale">×</button></td></tr>`}).join("")}</tbody></table></div>`:'<p class="sub" style="font-size:13px">No sales yet.</p>'}
-${rem>0?`<div class="sf" data-l="${l.id}"><label>Sale date<input type="date" class="a-d" value="${today()}"></label><label>Qty (${rem} left)<input type="number" class="a-q" min="1" max="${rem}" value="${rem}"></label><label>Sell each (€)<input type="number" class="a-p" min="0" step="0.01"></label><button class="btn sm" data-a="as" data-l="${l.id}" type="button">Add sale</button></div>`:""}
-<div class="row" style="margin-top:12px"><button class="btn sm" data-a="rc" data-l="${l.id}" type="button">View recap</button><button class="btn sm" data-a="el" data-l="${l.id}" type="button">Edit details &amp; notes</button><button class="btn ghost sm" data-a="dl" data-l="${l.id}" type="button">Delete these tickets</button></div></div></details>`}).join("")
-:'<div class="panel empty">No tickets match. Add a group of tickets above.</div>';
+const sq=soldQ(l),rem=l.qty-sq,d=l.eventDate?Math.round((new Date(l.eventDate+"T00:00:00")-new Date(td+"T00:00:00"))/864e5):null;
+const badge=d===null?"":d===0?`<span class="bdg warn">${IC.warn}Today!</span>`:d<0?'<span class="bdg">Past</span>':d<=7?`<span class="bdg soon">D-${d}</span>`:"";
+const chip=l.transfer==="yes"?'<span class="pill ok">Transferred</span>':l.transfer==="pending"?'<span class="pill pend">Pending transfer</span>':"";
+const meta=[clean(l.sector)&&"Sec "+clean(l.sector),clean(l.row)&&"Row "+clean(l.row),l.eventDate?dmy(l.eventDate):"No date"].filter(Boolean).join(" · ");
+const sold=slotSales(l);
+const stSel=(i,s)=>`<select class="tst ${s?"sold":"stock"}" data-l="${l.id}" data-i="${i}"${s?` data-s="${s.id}"`:""} aria-label="Status of ticket ${i+1}"><option value="stock" ${s?"":"selected"}>In stock</option><option value="sold" ${s?"selected":""}>Sold</option></select>`;
+const rows=seatList(l).map((st,i)=>{const s=sold[i];
+if(!s&&sellRow&&sellRow.l===l.id&&sellRow.i===i)return `<tr class="selling"><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td><input type="date" class="r-d" value="${td}" aria-label="Sold on"></td><td><input type="number" class="r-p" min="0" step="0.01" placeholder="€" aria-label="Sold for (€)"></td><td class="mu">—</td><td class="mu">—</td><td><span class="stp sold">Sold</span></td><td><button class="ib ok" data-a="rs" data-l="${l.id}" data-i="${i}" type="button" title="Save sale" aria-label="Save sale">${IC.check}</button><button class="ib" data-a="rx" type="button" title="Cancel" aria-label="Cancel">${IC.x}</button></td></tr>`;
+if(!s)return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td>${stSel(i,null)}</td><td></td></tr>`;
+const p=s.price-l.cost,r=l.cost?p/l.cost*100:0;
+return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td>${dmy(s.date)}</td><td>${eur(s.price)}</td><td class="${p>=0?"pos":"neg"}">${eur(p)}</td><td class="${r>=0?"pos":"neg"}">${l.cost?(r<0?"−":"")+Math.abs(r).toFixed(0)+"%":"—"}</td><td>${stSel(i,s)}</td><td><button class="ib del" data-a="ds" data-l="${l.id}" data-s="${s.id}" type="button" title="Delete this sale (${s.qty} ticket${s.qty===1?"":"s"})" aria-label="Delete this sale">${IC.trash}</button></td></tr>`}).join("");
+return `<details class="lot" data-l="${l.id}" ${openIds.has(l.id)?"open":""}><summary><input type="checkbox" class="gck" data-l="${l.id}" ${l.qty&&Array.from({length:l.qty},(_,i)=>selT.has(l.id+":"+i)).every(Boolean)?"checked":""} aria-label="Select all tickets of ${esc(l.event)}">${IC.chev}<div class="lt"><div class="lt-n"><b>${esc(l.event)}</b>${badge}${chip}</div><span>${esc(meta)}</span>${l.notes?`<span class="lt-d" title="${esc(l.notes)}">${esc(l.notes)}</span>`:""}</div>
+<div class="lr"><div class="li"><b>${eur(inv(l))}</b><span>Invested</span></div><span class="tk">${l.qty} ticket${l.qty===1?"":"s"}</span></div></summary>
+<div class="lb"><div class="tw"><table class="tt"><thead><tr><th class="ck"></th><th>Seat</th><th>Paid</th><th>Sold on</th><th>Revenue</th><th>Profit</th><th>ROI</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>
+${l.notes?`<p class="lnote"><span class="lbl">Description</span>${esc(l.notes)}</p>`:""}
+<div class="lf">${rem>0?`<div class="sf" data-l="${l.id}"><label>Sale date<input type="date" class="a-d" value="${td}"></label><label>Qty (${rem} left)<input type="number" class="a-q" min="1" max="${rem}" value="${rem}"></label><label>Sell each (€)<input type="number" class="a-p" min="0" step="0.01"></label><button class="btn sm" data-a="as" data-l="${l.id}" type="button">Add sale</button></div>`:'<span class="mu" style="font-size:13px">All tickets sold.</span>'}
+<div class="la"><select class="trs" data-l="${l.id}" aria-label="Transfer status">${["no","pending","yes"].map(k=>`<option value="${k}" ${l.transfer===k?"selected":""}>${TR[k]}</option>`).join("")}</select>
+<button class="ib" data-a="rc" data-l="${l.id}" type="button" title="View recap" aria-label="View recap">${IC.recap}</button><button class="ib" data-a="el" data-l="${l.id}" type="button" title="Edit details" aria-label="Edit details">${IC.pen}</button><button class="ib del" data-a="dl" data-l="${l.id}" type="button" title="Delete these tickets" aria-label="Delete these tickets">${IC.trash}</button></div></div></div></details>`}).join("")
+:'<div class="panel empty">No tickets here. Use Add New to add a group of tickets.</div>';
+document.querySelectorAll(".gck").forEach(c=>{const l=S.lots.find(x=>x.id===c.dataset.l),n=Array.from({length:l.qty},(_,i)=>selT.has(l.id+":"+i)).filter(Boolean).length;c.indeterminate=n>0&&n<l.qty});
+$("rvn").textContent=S.mail.length;$("rvn").hidden=!S.mail.length;$("mkl").textContent=kwList().slice(0,4).join(", ")+(kwList().length>4?"…":"");if(!syncing)$("msl").textContent=S.mailAt?"Last synced "+dmy(S.mailAt):"Search Gmail for ticket emails";
+$("bulk").hidden=!selT.size;$("bkn").textContent=selT.size+" ticket"+(selT.size===1?"":"s")+" selected";if(selT.size&&!$("bkd").value)$("bkd").value=td;
 
-$("pulls").innerHTML=S.pulls.length?`<table><thead><tr><th>Date</th><th style="text-align:left">Client</th><th style="text-align:left">Event</th><th>Event date</th><th>Qty</th><th>Profit</th><th style="text-align:left">Notes</th><th></th></tr></thead><tbody>`+S.pulls.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(p=>`<tr><td>${fd(p.date)}</td><td style="text-align:left">${esc(p.client)}</td><td style="text-align:left">${esc(p.event)}</td><td>${fd(p.eventDate)}</td><td>${p.qty}</td><td class="${p.profit>=0?"pos":"neg"}"><b>${money(p.profit)}</b></td><td style="text-align:left;white-space:normal;min-width:150px;font-size:13px">${esc(p.notes)}</td><td><button class="x" data-a="dp" data-p="${p.id}" aria-label="Delete" title="Delete">×</button></td></tr>`).join("")+"</tbody></table>":'<div class="empty">No pulling sales yet.</div>';
+{/* pulling page: cards, filters, table */
+const pf=$("pfl").value.trim().toLowerCase(),pst=$("pst").value,mo=$("pmo"),pmv=mo.value;
+const ms=[...new Set(S.pulls.map(p=>(p.date||"").slice(0,7)).filter(Boolean))].sort().reverse();
+mo.innerHTML='<option value="all">All months</option>'+ms.map(k=>`<option value="${k}">${mname(k)}</option>`).join("");mo.value=ms.includes(pmv)?pmv:"all";
+const all=S.pulls,tot=all.reduce((a,p)=>a+(+p.profit||0),0),pend=all.filter(p=>!p.transferred),pendT=pend.reduce((a,p)=>a+(+p.profit||0),0),tix=all.reduce((a,p)=>a+(+p.qty||0),0);
+const pc=(a,b,c,cls)=>'<div class="card"><div class="lbl">'+a+'</div><div class="num '+cls+'">'+b+'</div><div class="trend">'+c+'</div></div>';
+$("pkpis").innerHTML=pc("Total profit",money(tot),(all.length-pend.length)+" transferred",tot<0?"neg":"acc")+pc("Average profit",money(all.length?tot/all.length:0),"Per sale","")+pc("Not transferred",money(pendT),pend.length+" pending",pend.length?"warn":"")+pc("Total sales",String(all.length),tix+" ticket"+(tix===1?"":"s")+" · all time","");
+const ps=all.filter(p=>(!pf||[p.client,p.event,p.notes].join(" ").toLowerCase().includes(pf))&&(pst==="all"||(pst==="yes")===!!p.transferred)&&(mo.value==="all"||(p.date||"").startsWith(mo.value))).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+[...selP].forEach(id=>{if(!all.some(p=>p.id===id))selP.delete(id)});
+const allOn=ps.length&&ps.every(p=>selP.has(p.id));
+$("pulls").innerHTML=ps.length?`<table class="ptt"><thead><tr><th class="ck"><input type="checkbox" class="pck-all" ${allOn?"checked":""} aria-label="Select all shown"></th><th>Date</th><th>Client</th><th>Items</th><th>Notes</th><th class="r">Profit</th><th class="c">Status</th><th class="c">Actions</th></tr></thead><tbody>`+ps.map(p=>{const pr=+p.profit||0,sub=[p.qty?p.qty+" ticket"+(p.qty===1?"":"s"):"",p.eventDate?"Event "+dmy(p.eventDate):""].filter(Boolean).join(" · ");
+return `<tr><td class="ck"><input type="checkbox" class="pck" data-p="${p.id}" ${selP.has(p.id)?"checked":""} aria-label="Select this sale"></td><td class="nw">${p.date?dmy(p.date):"—"}</td><td><b class="pcl">${esc(p.client)||'<span class="mu">—</span>'}</b></td>
+<td class="pit"><b>${esc(p.event)}</b>${sub?`<span>${sub}</span>`:""}</td><td class="pno">${p.notes?esc(p.notes):`<span class="mu">—</span>`}</td><td class="r ${pr>=0?"pos":"neg"}">${money(pr)}</td>
+<td class="c"><select class="pst ${p.transferred?"sold":"stock"}" data-p="${p.id}" aria-label="Transfer status"><option value="yes" ${p.transferred?"selected":""}>Transferred</option><option value="no" ${p.transferred?"":"selected"}>Not transferred</option></select></td>
+<td class="c nw"><button class="ib" data-a="ep" data-p="${p.id}" type="button" title="Edit" aria-label="Edit">${IC.pen}</button><button class="ib del" data-a="dp" data-p="${p.id}" type="button" title="Delete" aria-label="Delete">${IC.trash}</button></td></tr>`}).join("")+"</tbody></table>"
+:`<div class="empty">${all.length?"No pulling sales match.":"No pulling sales yet. Use Add New to log one."}</div>`;
+$("pbulk").hidden=!selP.size;$("pbn").textContent=selP.size+" sale"+(selP.size===1?"":"s")+" selected";}
 const ol=editing&&S.lots.find(l=>l.id===editing),rl=recap&&S.lots.find(l=>l.id===recap);
-$("ov").hidden=!(ol||rl);$("ov").classList.toggle("rcp",!ol&&!!rl);$("ov").innerHTML=ol?`<div class="wrap">${editForm(ol)}</div>`:rl?`<div class="wrap">${recapHtml(rl)}</div>`:"";document.body.style.overflow=(ol||rl)?"hidden":"";if(rl&&!ol){fitRecap();animateWaves()}renderChart();renderKpis();
+const om=adding?"add":reviewing?"review":kwEdit?"kw":pulling?"pull-"+(pulling.id||"new"):"";$("ov").hidden=!(om||ol||rl);$("ov").classList.toggle("rcp",!om&&!ol&&!!rl);if(om){if(!document.getElementById("ov-"+om))$("ov").innerHTML='<div class="wrap'+(om==="review"?" wide":"")+'" id="ov-'+om+'">'+(om==="add"?addForm():om==="review"?reviewSheet():om==="kw"?kwSheet():pullForm(S.pulls.find(p=>p.id===pulling.id)))+'</div>'}else $("ov").innerHTML=ol?`<div class="wrap">${editForm(ol)}</div>`:rl?`<div class="wrap">${recapHtml(rl)}</div>`:"";document.body.style.overflow=(om||ol||rl)?"hidden":"";if(rl&&!ol&&!om){fitRecap();animateWaves()}renderChart();renderKpis();
 }
 
 window.addEventListener("error",e=>stat("Error: "+e.message,1));
 /* ---- profit chart (top card) ---- */
-let rng="7d",ser="all",plMonth=today().slice(0,7),CH=null;
-const C={t:"#ff2e88",p:"#ececef",a:"#4d8dff"},G={W:340,H:200,L:34,R:10,T:12,B:28};
+/* metric card: plain-JS port of Kokonut UI's metric-card (MIT, @dorianbaffier, kokonutui.com).
+   Lines are the running total inside the period (sales are sparse); a read shows the real profit of a day or a range. */
+const C={t:"#ff2e88",p:"#ececef",a:"#4d8dff"},SEGS=[{name:"Tickets",color:C.t},{name:"Pulling",color:C.p}],PERS=[7,30,90];
+const MW=400,MH=120,MPY=10,SAMPLES=90,MORPH=420;
+let per=30,focus=null,cursor=null,range=null,drag=null,MC=null,shown=null,mraf=0;
+try{const v=+localStorage.getItem("tt-per");if(PERS.includes(v))per=v}catch(x){}
 const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-const kmoney=n=>(n<0?"−":"")+"€"+Math.round(Math.abs(n)).toLocaleString("en-US");
-const short=n=>{const a=Math.abs(n),s=n<0?"−":"";return s+(a>=1000?(a/1000).toFixed(a>=10000?0:1).replace(/\.0$/,"")+"k":String(Math.round(a*10)/10))};
-/* monotone cubic curve: smooth like the reference, but never bulges past the real values */
+const kmoney=n=>(Math.round(n)<0?"−":"")+"€"+Math.round(Math.abs(n)).toLocaleString("en-US");
+const sumA=a=>a.reduce((s,v)=>s+v,0),clampN=(v,a,b)=>Math.min(b,Math.max(a,v));
+const fDay=k=>new Date(k+"T00:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+const fShort=k=>new Date(k+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});
+/* monotone cubic curve: smooth, but never bulges past the real values */
 function smooth(p){
-const n=p.length,f=v=>v.toFixed(1);if(n<2)return n?`M${f(p[0][0])},${f(p[0][1])}`:"";
+const n=p.length,f=v=>v.toFixed(2);if(n<2)return n?`M${f(p[0][0])},${f(p[0][1])}`:"";
 const dx=[],m=[],t=[];
 for(let i=0;i<n-1;i++){dx[i]=p[i+1][0]-p[i][0];m[i]=(p[i+1][1]-p[i][1])/dx[i]}
 t[0]=m[0];t[n-1]=m[n-2];
@@ -500,73 +883,121 @@ for(let i=0;i<n-1;i++){if(m[i]===0){t[i]=t[i+1]=0;continue}const a=t[i]/m[i],b=t
 let d=`M${f(p[0][0])},${f(p[0][1])}`;
 for(let i=0;i<n-1;i++){const h=dx[i]/3;d+=`C${f(p[i][0]+h)},${f(p[i][1]+t[i]*h)} ${f(p[i+1][0]-h)},${f(p[i+1][1]-t[i+1]*h)} ${f(p[i+1][0])},${f(p[i+1][1])}`}
 return d}
-function chartSvg(c){
-const {W,H,L,R,T,B}=G,n=c.labels.length;
-const all=c.series.flatMap(s=>s.vals).concat(0);
-let mn=Math.min(...all),mx=Math.max(...all);if(mx-mn<1e-9)mx=mn+1;
-const raw=(mx-mn)/(H>320?5:3),mag=Math.pow(10,Math.floor(Math.log10(raw))),st=[1,2,2.5,5,10].map(k=>k*mag).find(x=>x>=raw);
-mn=Math.floor(mn/st+1e-9)*st;mx=Math.ceil(mx/st-1e-9)*st;
-const X=i=>L+(n<2?(W-L-R)/2:i*(W-L-R)/(n-1)),Y=v=>T+(mx-v)/(mx-mn)*(H-T-B);c.X=X;c.Y=Y;
-let g=`<defs>${c.series.map((s,k)=>`<linearGradient id="gf${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.color}" stop-opacity="${s.fill}"/><stop offset="1" stop-color="${s.color}" stop-opacity="0"/></linearGradient>`).join("")}</defs>`;
-const every=Math.ceil(n/Math.max(4,Math.min(12,Math.floor((W-L-R)/52))));
-c.labels.forEach((lb,i)=>{if(i%every===0||(i===n-1&&(n-1)%every>=Math.ceil(every/2))){const x=X(i).toFixed(1);g+=`<line x1="${x}" x2="${x}" y1="${T}" y2="${H-B}" stroke="#1f1f22"/><text x="${x}" y="${H-6}" text-anchor="middle" font-size="11" fill="#6e6e74">${lb}</text>`}});
-for(let v=mn;v<=mx+1e-9;v+=st){const y=Y(v).toFixed(1);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#1f1f22"/><text x="${L-8}" y="${(+y+4).toFixed(1)}" text-anchor="end" font-size="11" fill="#6e6e74">${short(v)}</text>`}
-const y0=Y(0).toFixed(1);
-c.series.forEach((s,k)=>{const p=s.vals.map((v,i)=>[X(i),Y(v)]),d=smooth(p);
-if(n<2){g+=`<circle cx="${p[0][0]}" cy="${p[0][1]}" r="3" fill="${s.color}"/>`;return}
-g+=`<path d="${d}L${X(n-1).toFixed(1)},${y0}L${X(0).toFixed(1)},${y0}Z" fill="url(#gf${k})"/><path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.w}" stroke-linecap="round" stroke-linejoin="round"/>`});
-g+=`<line id="cx" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="#3a3a3f" opacity="0"/><g id="dots"></g>`;
-return `<svg id="cs" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;overflow:visible;touch-action:pan-y">${g}</svg>`}
-function bindChart(svg){
-const n=CH.labels.length,{W,L,R}=G,cx=svg.querySelector("#cx"),dots=svg.querySelector("#dots"),tip=$("tip"),wrap=$("cw");
-const show=i=>{const x=CH.X(i).toFixed(1);cx.setAttribute("x1",x);cx.setAttribute("x2",x);cx.setAttribute("opacity",1);
-dots.innerHTML=CH.series.map(s=>{const y=CH.Y(s.vals[i]).toFixed(1);return s.solid?`<circle cx="${x}" cy="${y}" r="5" fill="${s.color}" stroke="#141415" stroke-width="2"/>`:`<circle cx="${x}" cy="${y}" r="4.5" fill="#141415" stroke="${s.color}" stroke-width="1.6"/>`}).join("");
-tip.innerHTML=`<b>${CH.full[i]}</b>`+CH.series.slice().reverse().map(s=>`<div><i style="background:${s.color}"></i>${s.name}: ${money(s.vals[i])}</div>`).join("");
-tip.hidden=false;
-const b=svg.getBoundingClientRect(),wb=wrap.getBoundingClientRect(),px=x/W*b.width+(b.left-wb.left),tw=tip.offsetWidth;
-let left=px+14;if(left+tw>wb.width)left=px-14-tw;if(left<0)left=Math.max(0,Math.min(wb.width-tw,px-tw/2));tip.style.left=left+"px"};
-const at=e=>{const b=svg.getBoundingClientRect(),px=(e.clientX-b.left)/b.width*W;return n<2?0:Math.max(0,Math.min(n-1,Math.round((px-L)/((W-L-R)/(n-1)))))};
-svg.addEventListener("pointermove",e=>show(at(e)));svg.addEventListener("pointerdown",e=>show(at(e)));
-svg.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse"&&CH.home>-1)show(CH.home)});
-return show}
+const myOf=h=>MPY+(1-h)*(MH-MPY*2);
+const mPath=hs=>smooth(hs.map((h,i)=>[i/Math.max(1,hs.length-1)*MW,myOf(h)]));
+const mArea=d=>`${d}L${MW},${MH}L0,${MH}Z`;
+/* every period is resampled to the same length, so one shape can morph into another */
+function resample(v,n){if(!v.length)return new Array(n).fill(0);const o=[];for(let i=0;i<n;i++){const at=i/(n-1)*(v.length-1),lo=Math.floor(at),hi=Math.min(v.length-1,lo+1);o.push(v[lo]+(v[hi]-v[lo])*(at-lo))}return o}
+/* daily profit, oldest first, ending today: parts = [tickets, pulling] */
+function daily(n){const t=new Date(),keys=[];for(let i=n-1;i>=0;i--)keys.push(ymd(new Date(t.getFullYear(),t.getMonth(),t.getDate()-i)));
+const ix=new Map(keys.map((k,i)=>[k,i])),out=keys.map(date=>({date,parts:[0,0]}));
+S.lots.forEach(l=>l.sales.forEach(s=>{const i=ix.get(s.date);if(i!==undefined)out[i].parts[0]+=s.qty*(s.price-l.cost)}));
+S.pulls.forEach(p=>{const i=p.date?ix.get(p.date):undefined;if(i!==undefined)out[i].parts[1]+=p.profit});
+return out}
+function mBuild(){
+const data=daily(per*2),cur=data.slice(per),prev=data.slice(0,per);
+const pick=d=>focus===null?d.parts[0]+d.parts[1]:d.parts[focus];
+const now=cur.map(pick),before=prev.map(pick),run=a=>{let s=0;return a.map(v=>s+=v)};
+const cn=run(now),cb=run(before),all=cn.concat(cb,0);
+let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo)*.06||1;lo-=pad;hi+=pad;
+const norm=v=>(v-lo)/(hi-lo),hc=cn.map(norm),hp=cb.map(norm);
+return {cur,prev,now,before,cn,cb,norm,shape:{c:resample(hc,SAMPLES),p:resample(hp,SAMPLES)},paths:{c:mPath(hc),p:mPath(hp)}}}
+/* each digit rolls on its own wheel, keyed from the right so units stay put when the length changes */
+const DIG=[..."0123456789"].map(d=>`<span>${d}</span>`).join("");
+function roll(el,str){const ch=[...str],keys=ch.map((c,i)=>(/\d/.test(c)?"d":"s")+(ch.length-i));
+/* never detach a wheel that stays (a re-inserted node loses its transition); only add/remove the ones that change.
+   New wheels start at 0 and get one reflow before their target is set, so they roll in too. */
+const want=new Set(keys);[...el.children].forEach(n=>{if(!want.has(n.dataset.k))n.remove()});
+const have=new Map([...el.children].map(n=>[n.dataset.k,n]));let added=false;
+keys.forEach((k,i)=>{let n=have.get(k);if(!n){n=document.createElement("span");n.dataset.k=k;added=true;
+if(k[0]==="d"){n.className="rd";n.innerHTML=`<span class="rd-0">0</span><span class="rd-w">${DIG}</span>`}}
+if(el.children[i]!==n)el.insertBefore(n,el.children[i]||null)});
+if(added)void el.offsetWidth;
+[...el.children].forEach((n,i)=>{if(n.className==="rd")n.lastChild.style.transform=`translateY(-${+ch[i]*10}%)`;else n.textContent=ch[i]})}
+function mMorph(){
+const to=MC.shape,from=shown,paint=(c,p)=>{$("mcc").setAttribute("d",c);$("mcdim").setAttribute("d",c);$("mca").setAttribute("d",mArea(c));$("mcp").setAttribute("d",p)};
+cancelAnimationFrame(mraf);const land=()=>{shown=to;paint(MC.paths.c,MC.paths.p)};
+const same=from&&from.c.every((v,i)=>Math.abs(v-to.c[i])<1e-6)&&from.p.every((v,i)=>Math.abs(v-to.p[i])<1e-6);
+if(!from||same||matchMedia("(prefers-reduced-motion: reduce)").matches){land();return}
+const t0=performance.now(),ease=t=>t<.5?4*t*t*t:1-(-2*t+2)**3/2;
+const fr=now=>{const t=ease(Math.min(1,(now-t0)/MORPH)),mix=(a,b)=>a.map((v,i)=>v+(b[i]-v)*t);
+shown={c:mix(from.c,to.c),p:mix(from.p,to.p)};if(t<1){paint(mPath(shown.c),mPath(shown.p));mraf=requestAnimationFrame(fr)}else land()};
+mraf=requestAnimationFrame(fr)}
+/* what the card reads: a range once a drag covers two days or more, else the cursor's day, else the whole period */
+function mRead(){
+const last=MC.cur.length-1;let span=null,ranged=false;
+if(range&&range.a!==range.b){span={lo:Math.min(range.a,range.b),hi:Math.max(range.a,range.b)};ranged=true}
+else if(cursor!==null&&cursor<=last)span={lo:cursor,hi:cursor};
+const tot=a=>sumA(span?a.slice(span.lo,span.hi+1):a),value=tot(MC.now),cmp=tot(MC.before);
+const day=span&&!ranged?MC.cur[span.lo]:null;
+let cap=`vs previous ${per} days`;
+if(ranged)cap=`${fShort(MC.cur[span.lo].date)} – ${fShort(MC.cur[span.hi].date)} vs prior ${span.hi-span.lo+1} days`;
+else if(day)cap=`${fDay(day.date)} vs ${fShort(MC.prev[span.lo].date)}`;
+const txt=kmoney(value);roll($("mcv"),txt);$("mcsr").textContent=txt;$("mcvw").classList.toggle("neg",Math.round(value)<0);
+const dl=$("mcd");
+if(Math.abs(cmp)<.005){const z=Math.abs(value)<.005;dl.className=z?"eq":value>0?"up":"dn";dl.textContent=z?"– 0.0%":(value>0?"▲":"▼")+" new"}
+else{const d=(value-cmp)/Math.abs(cmp);dl.className=d>=0?"up":"dn";dl.textContent=(d>=0?"▲ ":"▼ ")+Math.abs(d*100).toFixed(1)+"%"}
+$("mccap").textContent=cap;$("mcclr").hidden=!ranged;
+const ch=$("mcch");ch.setAttribute("aria-valuenow",String(span?span.hi+1:last+1));
+ch.setAttribute("aria-valuetext",ranged?`${cap}: ${txt}`:day?`${fDay(day.date)}: ${txt}`:`${txt} in total`);
+const X=i=>last?i/last*MW:MW,pct=i=>X(i)/MW*100,top=v=>myOf(MC.norm(v))/MH*100;
+/* the lit part of the line: up to the read day, across the range, or all of it */
+const from=ranged?X(span.lo):0,to=span?X(span.hi):MW;$("mclr").setAttribute("x",from.toFixed(2));$("mclr").setAttribute("width",Math.max(0,to-from).toFixed(2));
+let o="";if(ranged)[span.lo,span.hi].forEach(i=>o+=`<i class="mc-vl r" style="left:${pct(i)}%"></i>`);
+if(day)o+=`<i class="mc-vl" style="left:${pct(span.lo)}%"></i><i class="mc-dot tw" style="left:${pct(span.lo)}%;top:${top(MC.cb[span.lo])}%"></i><i class="mc-dot" style="left:${pct(span.lo)}%;top:${top(MC.cn[span.lo])}%"></i>`;
+$("mcov").innerHTML=o;const end=$("mcend");end.style.top=top(MC.cn[last])+"%";end.style.opacity=span?0:1;
+/* breakdown: each part's share of what the card reads */
+const parts=[0,0];(span?MC.cur.slice(span.lo,span.hi+1):MC.cur).forEach(d=>{parts[0]+=d.parts[0];parts[1]+=d.parts[1]});
+const ab=Math.abs(parts[0])+Math.abs(parts[1]);
+$("mcbar").querySelectorAll("i").forEach(b=>b.style.flexGrow=Math.max(0,parts[+b.dataset.i]));
+$("mcli").querySelectorAll("[data-i]").forEach(b=>{const v=parts[+b.dataset.i],vl=b.querySelector(".vl");vl.textContent=kmoney(v);vl.className="vl"+(Math.round(v)<0?" neg":"");b.querySelector(".sh").textContent=(ab?Math.abs(v)/ab*100:0).toFixed(0)+"%"})}
 function renderChart(){
-$("rng").querySelectorAll("[data-r]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.r===rng)));
-$("ser").querySelectorAll("[data-s]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.s===ser)));
-$("mnav").hidden=rng!=="month";$("mi").value=plMonth;
-const cum=$("cum").checked,keys=[],labels=[],full=[];let kf=s=>s;
-if(rng==="7d"){const t=new Date();for(let i=6;i>=0;i--){const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()-i);keys.push(ymd(d));labels.push(d.toLocaleDateString("en-US",{weekday:"short"}));full.push(d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}))}}
-else if(rng==="month"){const y=+plMonth.slice(0,4),m=+plMonth.slice(5,7),n=new Date(y,m,0).getDate();for(let i=1;i<=n;i++){const d=new Date(y,m-1,i);keys.push(ymd(d));labels.push(String(i));full.push(d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}))}}
-else{kf=s=>s.slice(0,7);const ks=months().map(t=>t.k).sort();
-if(ks.length){let y=+ks[0].slice(0,4),m=+ks[0].slice(5,7);const e=ks[ks.length-1];for(;;){const k=y+"-"+String(m).padStart(2,"0");keys.push(k);if(k===e)break;m++;if(m>12){m=1;y++}}}
-keys.forEach(k=>{full.push(mname(k));labels.push(new Date(+k.slice(0,4),+k.slice(5,7)-1,1).toLocaleDateString("en-US",{month:"short"}))})}
-const ix=new Map(keys.map((k,i)=>[k,i])),Rv=keys.map(()=>0),Pv=keys.map(()=>0);
-S.lots.forEach(l=>l.sales.forEach(s=>{const i=ix.get(kf(s.date));if(i!==undefined)Rv[i]+=s.qty*(s.price-l.cost)}));
-S.pulls.forEach(p=>{const i=p.date?ix.get(kf(p.date)):undefined;if(i!==undefined)Pv[i]+=p.profit});
-const Av=Rv.map((v,i)=>v+Pv[i]),tot=Av.reduce((a,v)=>a+v,0),acc=a=>{let t=0;return a.map(v=>cum?(t+=v):v)};
-/* "all" = the three lines together; t / p / a = that one graph on its own scale */
-const RAW={t:Rv,p:Pv,a:Av},NAME={t:"Ticket profit",p:"Pulling profit",a:"Combined profit",all:"Combined profit"};
-const pick=ser==="all"?Av:RAW[ser],selTot=pick.reduce((a,v)=>a+v,0);
-let home=-1;(ser==="all"?Av.map((v,i)=>Math.abs(v)+Math.abs(Rv[i])+Math.abs(Pv[i])):pick).forEach((v,i)=>{if(Math.abs(v)>1e-9)home=i});
-const allS=[{k:"a",name:"Combined",color:C.a,w:2,fill:.10,vals:acc(Av)},{k:"p",name:"Pulling",color:C.p,w:2,fill:.07,vals:acc(Pv)},{k:"t",name:"Tickets",color:C.t,w:2.6,fill:.30,solid:1,vals:acc(Rv)}];
-CH={labels,full,home,series:ser==="all"?allS:allS.filter(s=>s.k===ser).map(s=>({...s,w:2.6,fill:.30,solid:1}))};
-$("kpi").textContent=kmoney(selTot);$("kpi").className="num "+(selTot<0?"neg":"");
-$("kpisub").textContent=NAME[ser]+" · "+(rng==="7d"?"last 7 days":rng==="month"?mname(plMonth):"all time");
-let ls=null;S.lots.forEach(l=>l.sales.forEach(s=>{if(!ls||s.date>ls.s.date)ls={l,s}}));
-$("chside").innerHTML=ls?`<div class="lbl">Last sale</div><b>${esc(ls.l.event)}</b><span>${ls.s.qty} × ${money(ls.s.price)}</span><span>${fd(ls.s.date)}</span>`:"";
-$("tip").hidden=true;
-/* draw at the box's real pixel size: fills the desktop panel, keeps text 11px everywhere */
-const cw=$("cw"),wide=matchMedia("(min-width:1024px)").matches;
-G.W=Math.max(260,cw.clientWidth||340);G.H=wide&&cw.clientHeight>160?cw.clientHeight-4:Math.round(G.W*200/340);
-$("chart").innerHTML=labels.length?chartSvg(CH):'<div class="empty">No sales yet. Your profit chart shows up here.</div>';
-$("leg").innerHTML=CH.series.slice().reverse().map(s=>`<span class="lg"><i style="background:${s.color}"></i>${s.name}</span>`).join("");
-const svg=$("cs");if(svg&&labels.length){const show=bindChart(svg);if(home>-1)show(home)}}
+MC=mBuild();cursor=range=drag=null;
+$("dash").style.setProperty("--mcc",focus===null?C.a:SEGS[focus].color);
+$("mcl").innerHTML="Profit"+(focus===null?"":` <b>· ${SEGS[focus].name}</b>`);
+$("mcper").querySelector(".mc-pill").style.transform=`translateX(${Math.max(0,PERS.indexOf(per))*100}%)`;
+$("mcper").querySelectorAll("[data-p]").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.p===per)));
+$("mcbar").querySelectorAll("i").forEach(b=>b.classList.toggle("dim",focus!==null&&focus!==+b.dataset.i));
+$("mcli").querySelectorAll("[data-i]").forEach(b=>{const i=+b.dataset.i;b.setAttribute("aria-pressed",String(focus===i));b.classList.toggle("dim",focus!==null&&focus!==i);b.setAttribute("aria-label",focus===i?"Show all profit":"Show only "+SEGS[i].name)});
+$("mcf").textContent=fShort(MC.cur[0].date);$("mct").textContent=fShort(MC.cur[MC.cur.length-1].date);
+$("mcch").setAttribute("aria-label",`Profit over the last ${per} days. Arrow keys read each day; hold Shift to select a range.`);$("mcch").setAttribute("aria-valuemax",String(per));
+mMorph();mRead()}
+{const ch=$("mcch"),last=()=>MC.cur.length-1;
+const at=x=>{const r=ch.getBoundingClientRect();return Math.round(clampN((x-r.left)/(r.width||1),0,1)*last())};
+const release=e=>{drag=null;if(e.pointerType!=="mouse")cursor=null;mRead()};
+ch.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;ch.setPointerCapture(e.pointerId);const i=at(e.clientX);drag=i;range=null;cursor=i;mRead()});
+ch.addEventListener("pointermove",e=>{const i=at(e.clientX);
+if(drag!==null){const a=drag;range=range||i!==a?{a,b:i}:null;cursor=i}else if(e.pointerType==="mouse"&&!range)cursor=i;else return;mRead()});
+ch.addEventListener("pointerup",release);ch.addEventListener("pointercancel",release);ch.addEventListener("lostpointercapture",release);
+ch.addEventListener("pointerleave",()=>{if(drag===null&&!range&&cursor!==null){cursor=null;mRead()}});
+ch.addEventListener("blur",()=>{if(cursor!==null&&!range){cursor=null;mRead()}});
+ch.addEventListener("keydown",e=>{if(e.key==="Escape"){range=cursor=null;mRead();return}
+const mv={ArrowLeft:-1,ArrowRight:1,Home:-1e4,End:1e4}[e.key];if(mv===undefined)return;e.preventDefault();
+const from=range?range.b:cursor===null?last():cursor,to=clampN(from+mv,0,last());
+range=e.shiftKey?{a:range?range.a:from,b:to}:null;cursor=to;mRead()});
+$("mcclr").onclick=()=>{range=cursor=null;mRead()};
+$("mcper").onclick=e=>{const b=e.target.closest("[data-p]");if(!b)return;per=+b.dataset.p;try{localStorage.setItem("tt-per",String(per))}catch(x){}renderChart()};
+$("mcli").onclick=e=>{const b=e.target.closest("[data-i]");if(!b)return;const i=+b.dataset.i;focus=focus===i?null:i;renderChart()}}
 function renderKpis(){
-let tp=0,sold=0,left=0,tied=0;S.lots.forEach(l=>{tp+=lotProfit(l);const q=soldQ(l);sold+=q;left+=l.qty-q;tied+=(l.qty-q)*l.cost});
-const pp=S.pulls.reduce((a,p)=>a+p.profit,0);
-const up='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 11.5l4-4 3 3 6-6M10.5 4.5h4v4"/></svg>';
-const ring='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="8" cy="8" r="4.6"/></svg>';
-$("kpis").innerHTML=[["Ticket profit",kmoney(tp),up+"All time",C.t],["Pulling profit",kmoney(pp),up+"All time",C.p],["Tickets sold",sold,up+S.lots.length+" groups","#34d27b"],["Unsold tickets",left,ring+kmoney(tied)+" at cost","#8b7bff"]]
-.map(([a,b,c,col])=>`<div class="card acc" style="--c:${col}"><div class="lbl">${a}</div><div class="num">${b}</div><div class="trend">${c}</div></div>`).join("");
+/* top row: revenue, profit, ROI on sold tickets, tickets */
+let rev=0,cogs=0,tp=0,sold=0,left=0,tied=0,sales=0;
+S.lots.forEach(l=>{tp+=lotProfit(l);const q=soldQ(l);sold+=q;left+=l.qty-q;tied+=(l.qty-q)*l.cost;cogs+=q*l.cost;l.sales.forEach(s=>{rev+=s.qty*s.price;sales++})});
+const pp=S.pulls.reduce((a,p)=>a+p.profit,0),roi=cogs?tp/cogs*100:0,pf=tp+pp;
+$("kpis").innerHTML=[
+["Revenue",money(rev),`${sales} sale${sales===1?"":"s"} · ${kmoney(tied)} unsold at cost`,"#ececef",""],
+["Profit",money(pf),`<b style="color:${C.t}">${kmoney(tp)}</b> tickets · <b>${kmoney(pp)}</b> pulling`,C.t,pf<0?"neg":"acc"],
+["Confirmed ROI",(cogs?(roi<0?"−":"")+Math.abs(roi).toFixed(1):"0.0")+"%","Profit on sold tickets vs their cost","#34d27b",roi<0?"neg":""],
+["Tickets",String(sold+left),`<b style="color:var(--pos)">${sold} sold</b> · ${left} unsold`,"#8b7bff",""]]
+.map(([a,b,c,col,cls])=>`<div class="card acc" style="--c:${col}"><div class="lbl">${a}</div><div class="num ${cls}">${b}</div><div class="trend">${c}</div></div>`).join("");
+/* tickets page cards */
+const invest=S.lots.reduce((a,l)=>a+l.qty*l.cost,0),tcard=(a,b,c,cls)=>'<div class="card"><div class="lbl">'+a+'</div><div class="num '+cls+'">'+b+'</div><div class="trend">'+c+'</div></div>';
+$("tkpis").innerHTML=tcard("Ticket revenue",money(rev),"All time","")+tcard("Ticket profit",money(tp),"All time",tp<0?"neg":"acc")+tcard("In stock",String(left),kmoney(tied)+" at cost","")+tcard("Investment",money(invest),S.lots.length+" ticket group"+(S.lots.length===1?"":"s"),"");
+/* upcoming events: groups whose event is today or later, soonest first */
+const td=today(),DAY=864e5,up=S.lots.filter(l=>l.eventDate&&l.eventDate>=td).sort((x,y)=>x.eventDate.localeCompare(y.eventDate));
+$("evc").textContent=up.length;
+$("evl").innerHTML=up.length?up.map(l=>{const un=l.qty-soldQ(l),d=Math.round((new Date(l.eventDate+"T00:00:00")-new Date(td+"T00:00:00"))/DAY);
+return `<li><div class="ev-m"><b>${esc(l.event)}</b><span>${dmy(l.eventDate)}</span></div><div class="ev-r">${l.qty} ticket${l.qty===1?"":"s"} · ${un?`<span class="un">${un} unsold</span>`:"all sold"} · <span class="dd${d<=7?" soon":""}">${d?"D-"+d:"Today"}</span></div></li>`}).join("")
+:'<li class="empty">No upcoming events.</li>';
 $("nvc").textContent=S.lots.length+" ticket group"+(S.lots.length===1?"":"s");$("nvs").textContent=sold+" sold · "+left+" unsold";$("nvb").style.width=(sold+left?sold/(sold+left)*100:0)+"%"}
 /* ---- side menu ---- */
 const navEl=$("nav"),root=document.documentElement;
@@ -587,30 +1018,57 @@ const fromHash=()=>location.hash.slice(1)||"dash";
 navEl.addEventListener("click",e=>{const b=e.target.closest("[data-nav]");if(!b)return;const k=b.dataset.nav;setNav(false);
 if(k!==view)history.pushState(null,"",k==="dash"?location.pathname+location.search:"#"+k);showView(k)});
 addEventListener("popstate",()=>{setNav(false);showView(fromHash())});
-const setM=k=>{plMonth=k;rng="month";renderChart()};
-const shiftM=d=>{const t=new Date(+plMonth.slice(0,4),+plMonth.slice(5,7)-1+d,1);setM(t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0"))};
-$("rng").onclick=e=>{const b=e.target.closest("[data-r]");if(b){rng=b.dataset.r;renderChart()}};
-$("ser").onclick=e=>{const b=e.target.closest("[data-s]");if(b){ser=b.dataset.s;try{localStorage.setItem("tt-ser",ser)}catch(x){}renderChart()}};
-try{const s=localStorage.getItem("tt-ser");if(["all","t","p","a"].includes(s))ser=s}catch(x){}
-$("cum").onchange=renderChart;$("mi").onchange=e=>{if(e.target.value)setM(e.target.value)};
-$("pm").onclick=()=>shiftM(-1);$("nm").onclick=()=>shiftM(1);
-let rzT=0;addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(view==="dash")renderChart()},120)});
 /* ---- actions ---- */
-$("fl").oninput=$("fs").onchange=$("ft").onchange=$("ff").onchange=$("fe").onchange=render;
+$("fl").oninput=render;
+$("lots").addEventListener("click",e=>{const g=e.target.closest(".gck"),r=e.target.closest(".rck");if(!g&&!r)return;
+const l=S.lots.find(x=>x.id===(g||r).dataset.l);if(!l)return;
+if(g){e.preventDefault();const keys=Array.from({length:l.qty},(_,i)=>l.id+":"+i),all=keys.every(k=>selT.has(k));keys.forEach(k=>all?selT.delete(k):selT.add(k));setTimeout(render)}
+else{const k=l.id+":"+r.dataset.i;r.checked?selT.add(k):selT.delete(k);render()}});
+$("lots").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest(".selling")){e.preventDefault();e.target.closest("tr").querySelector('[data-a="rs"]').click()}else if(e.key==="Escape"&&sellRow){sellRow=null;render()}});
+$("ftab").onclick=e=>{const b=e.target.closest("[data-f]");if(b){ltab=b.dataset.f;render()}};
+$("fsort").onclick=e=>{const b=e.target.closest("[data-s]");if(b){lsort=b.dataset.s;render()}};
+document.addEventListener("change",e=>{const ps=e.target.closest(".pst");if(ps&&ps.dataset.p){const p=S.pulls.find(x=>x.id===ps.dataset.p);if(p){p.transferred=ps.value==="yes";persist();render()}return}
+const rt=e.target.closest(".rv-t");if(rt){rt.closest(".rv").dataset.t=rt.value;return}
+const t=e.target.closest(".tst");if(t){const lot=S.lots.find(l=>l.id===t.dataset.l),i=+t.dataset.i;if(!lot)return;openIds.add(lot.id);
+if(t.value==="sold"){sellRow={l:lot.id,i};render();setTimeout(()=>{const p=document.querySelector(".selling .r-p");if(p)p.focus()},30);return}
+const s=lot.sales.find(x=>x.id===t.dataset.s);if(!s)return;
+/* back to in stock: drop just this ticket; the other tickets of that sale keep their rows */
+unsellRows(lot,[i]);
+persist();render();return}
+const s=e.target.closest(".trs");if(!s)return;const lot=S.lots.find(l=>l.id===s.dataset.l);if(lot){lot.transfer=s.value;openIds.add(lot.id);persist();render()}});
 $("lots").addEventListener("toggle",e=>{const id=e.target.dataset.l;if(id)e.target.open?openIds.add(id):openIds.delete(id)},true);
-$("addlot").onclick=()=>{
-if(!$("lf").reportValidity())return;
-const l={id:uid(),event:$("ev").value.trim(),eventDate:$("ed").value,qty:+$("q").value,cost:+$("cp").value,sector:$("sec").value.trim(),row:$("rw").value.trim(),seats:$("se").value.trim(),transfer:$("tr").value,notes:$("nt").value.trim(),sales:[]};
-S.lots.push(l);persist();$("lf").reset();$("q").value=2;render()};
-$("pf").onsubmit=null;
-$("addpull").onclick=()=>{
-if(!$("pf").reportValidity())return;
-S.pulls.push({id:uid(),date:$("pd").value,client:$("pc").value.trim(),event:$("pe").value.trim(),qty:+$("pq").value||0,profit:+$("pp").value,transferred:$("pt").checked,notes:$("pn").value.trim(),sector:"",row:"",seats:"",eventDate:$("pv").value});
-persist();$("pf").reset();$("pq").value=2;render()};
+
+$("pfl").oninput=$("pst").onchange=$("pmo").onchange=render;
+$("pulls").addEventListener("click",e=>{const a=e.target.closest(".pck-all"),c=e.target.closest(".pck");if(a){$("pulls").querySelectorAll(".pck").forEach(x=>a.checked?selP.add(x.dataset.p):selP.delete(x.dataset.p));render()}else if(c){c.checked?selP.add(c.dataset.p):selP.delete(c.dataset.p);render()}});
 document.addEventListener("click",e=>{
 const b=e.target.closest("[data-a]");if(!b)return;
 const a=b.dataset.a,lot=S.lots.find(l=>l.id===b.dataset.l);
-if(a==="as"&&lot){
+if(a==="nl"){adding=true;render();setTimeout(()=>{const i=document.getElementById("ev");if(i)i.focus()},30)}
+else if(a==="al"){const lf=document.getElementById("lf");if(!lf.reportValidity())return;
+S.lots.push({id:uid(),event:$("ev").value.trim(),eventDate:$("ed").value,qty:+$("q").value,cost:+$("cp").value,sector:$("sec").value.trim(),row:$("rw").value.trim(),seats:$("se").value.trim(),transfer:$("tr").value,notes:$("nt").value.trim(),sales:[]});
+adding=false;persist();render()}
+else if(a==="rs"&&lot){const tr=b.closest("tr"),d=tr.querySelector(".r-d").value,p=tr.querySelector(".r-p").value;
+if(!d||p===""||+p<0){note("Enter the sale date and the price.",1);return}
+lot.sales.push({id:uid(),date:d,qty:1,price:+p,seat:+b.dataset.i});sellRow=null;openIds.add(lot.id);persist();render()}
+else if(a==="rx"){sellRow=null;render()}
+else if(a==="ms"){closeMenus();mailSync()}
+else if(a==="mk"){closeMenus();kwEdit=true;render()}
+else if(a==="kws"){S.mailKw=$("kwt").value.split(/\n|,/).map(s=>s.trim()).filter(Boolean).slice(0,20);kwEdit=false;persist();render();note("Keywords saved.")}
+else if(a==="kwr"){$("kwt").value=MAIL_KW.join("\n")}
+else if(a==="rv"){reviewing=true;render()}
+else if(a==="ra"){rvAdd(b.closest(".rv"))}
+else if(a==="ri"){rvDone(b.closest(".rv"),"Ignored. It won't come back on the next sync.")}
+else if(/^x[1-4]$/.test(a)){closeMenus();$("e"+a[1]).click()}
+else if(a==="im"){$("imp").click()}
+else if(a==="bc"){selT.clear();render()}
+else if(a==="bs"||a==="bu"){const by={};selT.forEach(k=>{const[id,i]=k.split(":");(by[id]=by[id]||[]).push(+i)});
+if(a==="bs"){const d=$("bkd").value,p=$("bkp").value;if(!d||p===""||+p<0){note("Enter the sale date and the price each.",1);return}
+let n=0;Object.entries(by).forEach(([id,rows])=>{const l=S.lots.find(x=>x.id===id),slots=slotSales(l);rows.forEach(i=>{if(!slots[i]){l.sales.push({id:uid(),date:d,qty:1,price:+p,seat:i});n++}})});
+note(n?n+" ticket"+(n===1?"":"s")+" marked sold.":"Those tickets are already sold.",!n)}
+else{let n=0;Object.entries(by).forEach(([id,rows])=>{const l=S.lots.find(x=>x.id===id),slots=slotSales(l),sold=rows.filter(i=>slots[i]);n+=sold.length;if(sold.length)unsellRows(l,sold)});
+note(n?n+" ticket"+(n===1?"":"s")+" back in stock.":"Those tickets are already in stock.",!n)}
+Object.keys(by).forEach(id=>openIds.add(id));selT.clear();$("bkp").value="";persist();render()}
+else if(a==="as"&&lot){
 const w=b.closest(".sf"),d=w.querySelector(".a-d").value,q=+w.querySelector(".a-q").value,p=w.querySelector(".a-p").value;
 if(!d||!q||p===""||q>lot.qty-soldQ(lot)){note("Enter a date, a price, and a quantity no higher than the tickets left.",1);return}
 lot.sales.push({id:uid(),date:d,qty:q,price:+p});openIds.add(lot.id);persist();render()}
@@ -621,11 +1079,19 @@ else if(a==="cr"){recap=null;render()}
 else if(a==="ts"&&lot){lot.transfer=b.dataset.v;openIds.add(lot.id);persist();render()}
 else if(a==="mt"&&lot){lot.transfer="yes";persist();render()}
 else if(a==="el"&&lot){editing=lot.id;openIds.add(lot.id);render()}
-else if(a==="cl"){editing=null;render();pull()}
+else if(a==="cl"){editing=null;adding=false;reviewing=false;kwEdit=false;pulling=null;render();pull()}
 else if(a==="sl"&&lot){const w=b.closest(".ef"),v=c=>w.querySelector(c).value.trim(),q=+v(".e-q"),k=v(".e-k"),m=w.querySelector(".e-m");
 if(!v(".e-e")||!v(".e-d")||!q||k===""||q<soldQ(lot)){m.textContent="Enter an event, an event date, a cost, and at least "+Math.max(1,soldQ(lot))+" tickets bought (that many are already sold).";return}
 Object.assign(lot,{event:v(".e-e"),eventDate:v(".e-d"),qty:q,cost:+k,sector:v(".e-s"),row:v(".e-r"),seats:v(".e-se"),notes:w.querySelector(".e-n").value.trim(),transfer:w.querySelector(".e-t").value});editing=null;persist();render()}
-else if(a==="dp"){S.pulls=S.pulls.filter(p=>p.id!==b.dataset.p);persist();render()}});
+else if(a==="dp"){const p=S.pulls.find(x=>x.id===b.dataset.p);if(p&&confirm("Delete this pulling sale"+(p.event?" ("+p.event+")":"")+"?")){S.pulls=S.pulls.filter(x=>x!==p);selP.delete(p.id);persist();render()}}
+else if(a==="np"){pulling={id:null};render();setTimeout(()=>{const i=document.getElementById("pc");if(i)i.focus()},30)}
+else if(a==="ep"){pulling={id:b.dataset.p};render()}
+else if(a==="sp"){const f=document.getElementById("pf");if(!f.reportValidity())return;
+const v={date:$("pd").value,client:$("pc").value.trim(),event:$("pe").value.trim(),eventDate:$("pv").value,qty:+$("pq").value||0,profit:+$("pp").value,transferred:$("pt").value==="yes",notes:$("pn").value.trim()};
+const old=pulling.id&&S.pulls.find(p=>p.id===pulling.id);if(old)Object.assign(old,v);else S.pulls.push(Object.assign({id:uid(),sector:"",row:"",seats:""},v));
+pulling=null;persist();render();note(old?"Changes saved.":"Pulling sale added.")}
+else if(a==="pbt"||a==="pbu"){const t=a==="pbt";S.pulls.forEach(p=>{if(selP.has(p.id))p.transferred=t});const n=selP.size;selP.clear();persist();render();note(n+" sale"+(n===1?"":"s")+" marked "+(t?"transferred.":"not transferred."))}
+else if(a==="pbc"){selP.clear();render()}});
 
 /* ---- CSV ---- */
 const q2=v=>{v=String(v==null?"":v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
@@ -642,12 +1108,12 @@ const u=URL.createObjectURL(file),a=document.createElement("a");a.href=u;a.downl
 function out(name,rows){
 if(rows.length<2){note("Nothing to export yet.",1);return}
 saveFile(name,toCsv(rows),"text/csv")}
-$("e4").onclick=()=>saveFile("ticket-ledger-"+today()+".json",JSON.stringify({lots:S.lots,pulls:S.pulls},null,1),"application/json");
+$("e4").onclick=()=>saveFile("ticket-ledger-"+today()+".json",JSON.stringify(whole(),null,1),"application/json");
 function importJson(text){
 let d;try{d=JSON.parse(text)}catch(e){note("That JSON file couldn’t be read.",1);return}
 if(!d||!Array.isArray(d.lots)){note("That JSON has no \"lots\" list, so it isn’t a ticket backup.",1);return}
 if((S.lots.length||S.pulls.length)&&!confirm("Replace all current data ("+S.lots.length+" ticket groups, "+S.pulls.length+" pulling sales) with this file?"))return;
-S={lots:d.lots,pulls:Array.isArray(d.pulls)?d.pulls:[]};S.lots.forEach(l=>{if(!Array.isArray(l.sales))l.sales=[]});norm();persist();render();
+S=Object.assign(mk(d),Array.isArray(d.mail)?{}:{mail:S.mail,seen:S.seen,mailAt:S.mailAt,mailKw:S.mailKw});S.lots.forEach(l=>{if(!Array.isArray(l.sales))l.sales=[]});norm();persist();render();
 note("Loaded "+S.lots.length+" ticket groups and "+S.pulls.length+" pulling sales.")}
 $("e1").onclick=()=>{const r=[["lot","event","event_date","qty_bought","cost_per_ticket","sector","row","seats","transferred","notes","sale_date","qty_sold","price_per_ticket"]];
 S.lots.forEach(l=>{const b=[l.id,l.event,l.eventDate,l.qty,l.cost,l.sector,l.row,l.seats,l.transfer==="yes"?"YES":l.transfer==="pending"?"PENDING":"NO",l.notes];
@@ -709,7 +1175,7 @@ $("imp").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
 const rd=new FileReader();rd.onload=()=>{try{const t=String(rd.result);/\.json$/i.test(f.name)||/^﻿?\s*\{/.test(t)?importJson(t):importCsv(t)}catch(x){note("Couldn’t read that file.",1)}};
 rd.onerror=()=>note("Couldn’t read that file.",1);rd.readAsText(f);e.target.value=""};
 
-$("pd").value=today();render();showView(fromHash());boot();
+render();showView(fromHash());boot();
 </script>
 </body>
 </html>
