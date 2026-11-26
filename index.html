@@ -708,6 +708,17 @@ html.side-closed .hb{display:grid!important;width:36px;height:36px;border-radius
 html.side-closed .hb:hover{background:#19191b}
 }
 @media (prefers-reduced-motion:reduce){.nav{transition:none!important}}
+/* editable profit */
+.pe{border:0;background:none;padding:2px 6px;margin:-2px -6px;border-radius:6px;font:inherit;font-variant-numeric:tabular-nums;color:inherit;cursor:text;border-bottom:1px dashed transparent}
+.pe:hover{background:#232325;border-bottom-color:rgba(237,237,237,.25)}
+.pe-in{width:96px;padding:4px 8px;font-size:13px;text-align:right}
+/* OŌS + month title */
+.ptitle{display:flex;align-items:center;flex-wrap:wrap;gap:0 .32em}
+.pt-wm{display:inline-flex;gap:.3em;font-weight:500;letter-spacing:0;color:var(--ink)}
+.pt-wm .mac{position:relative}
+.pt-wm .mac:before{content:"";position:absolute;left:50%;top:-.2em;width:.58em;height:.11em;border-radius:.03em;background:currentColor;transform:translateX(-50%)}
+.pt-sep{width:1px;height:.8em;margin:0 .4em;background:rgba(237,237,237,.18);font-style:normal}
+.ptitle .pt-wm,.ptitle .pt-wm span{color:var(--ink)}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -991,7 +1002,12 @@ return `<div class="rx-bar"><span class="rx-eye">Artist recap</span><button clas
 <div class="rx-b"><div><span class="rx-pk" style="font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase">Seat · ROI</span><div class="rx-roi${roi<0?" neg":""}">${roi<0?"−":"+"}${Math.round(Math.abs(roi))} %</div><span class="mu">return on investment</span></div>
 <div><div class="rx-bc">${bars}</div><div class="rx-code">${code}</div></div></div></div>
 <div class="rx-iss">Issued ${dmy(today())}</div>`}
-let ltab="all",lsort="date",adding=false,sellRow=null;
+let ltab="all",lsort="date",adding=false,sellRow=null,editP=null;
+/* new profit for one sold ticket → its sale price = cost + profit; a multi-ticket sale is split so only this ticket changes */
+function setProfit(lot,i,shown){const slots=slotSales(lot),s=slots[i];if(!s||!isFinite(shown))return false;
+const pe=CUR==="CZK"?shown/CZK:shown,price=Math.max(0,Math.round((lot.cost+pe)*100)/100);
+if(s.qty>1){lot.sales=lot.sales.filter(x=>x!==s);slots.forEach((x,j)=>{if(x===s)lot.sales.push({id:uid(),date:s.date,qty:1,price:j===i?price:s.price,fee:s.fee||0,seat:j})})}
+else{s.price=price;s.seat=i}return true}
 const tTr=(l,i)=>{const v=l.ttr&&l.ttr[i];return v==="yes"||v==="pending"||v==="no"?v:(l.transfer||"no")};
 /* group = Transferred when every ticket is, Not transferred when none is, otherwise Pending transfer */
 function groupTr(l){const v=Array.from({length:l.qty},(_,i)=>tTr(l,i));return v.every(x=>x==="yes")?"yes":v.every(x=>x==="no")?"no":"pending"}const selT=new Set();
@@ -1127,7 +1143,7 @@ const rows=seatList(l).map((st,i)=>{const s=sold[i];
 if(!s&&sellRow&&sellRow.l===l.id&&sellRow.i===i)return `<tr class="selling"><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td><input type="date" class="r-d" value="${td}" aria-label="Sold on"></td><td><input type="number" class="r-p" min="0" step="0.01" placeholder="€" aria-label="Sold for (€)"></td><td class="mu">—</td><td class="mu">—</td><td><span class="stp sold">Sold</span></td><td>${trSel(i)}</td><td><button class="ib ok" data-a="rs" data-l="${l.id}" data-i="${i}" type="button" title="Save sale" aria-label="Save sale">${IC.check}</button><button class="ib" data-a="rx" type="button" title="Cancel" aria-label="Cancel">${IC.x}</button></td></tr>`;
 if(!s)return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td>${stSel(i,null)}</td><td>${trSel(i)}</td><td></td></tr>`;
 const p=s.price-l.cost,r=l.cost?p/l.cost*100:0;
-return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td>${dmy(s.date)}</td><td>${eur(s.price)}</td><td class="${p>=0?"pos":"neg"}">${eur(p)}</td><td class="${r>=0?"pos":"neg"}">${l.cost?(r<0?"−":"")+Math.abs(r).toFixed(0)+"%":"—"}</td><td>${stSel(i,s)}</td><td>${trSel(i)}</td><td><button class="ib del" data-a="ds" data-l="${l.id}" data-s="${s.id}" type="button" title="Delete this sale (${s.qty} ticket${s.qty===1?"":"s"})" aria-label="Delete this sale">${IC.trash}</button></td></tr>`}).join("");
+return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td>${dmy(s.date)}</td><td>${eur(s.price)}</td><td class="${p>=0?"pos":"neg"}">${editP&&editP.l===l.id&&editP.i===i?`<input class="pe-in" type="number" step="0.01" value="${CUR==="CZK"?Math.round(p*CZK):p.toFixed(2)}" data-l="${l.id}" data-i="${i}" aria-label="Profit for ticket ${i+1} in ${CUR==="CZK"?"Kč":"€"}">`:`<button class="pe ${p>=0?"pos":"neg"}" data-a="pe" data-l="${l.id}" data-i="${i}" type="button" title="Change profit">${eur(p)}</button>`}</td><td class="${r>=0?"pos":"neg"}">${l.cost?(r<0?"−":"")+Math.abs(r).toFixed(0)+"%":"—"}</td><td>${stSel(i,s)}</td><td>${trSel(i)}</td><td><button class="ib del" data-a="ds" data-l="${l.id}" data-s="${s.id}" type="button" title="Delete this sale (${s.qty} ticket${s.qty===1?"":"s"})" aria-label="Delete this sale">${IC.trash}</button></td></tr>`}).join("");
 return `<details class="lot" data-l="${l.id}" ${openIds.has(l.id)?"open":""}><summary><input type="checkbox" class="gck" data-l="${l.id}" ${l.qty&&Array.from({length:l.qty},(_,i)=>selT.has(l.id+":"+i)).every(Boolean)?"checked":""} aria-label="Select all tickets of ${esc(l.event)}">${IC.chev}<div class="lt"><div class="lt-n"><b>${esc(l.event)}</b>${badge}${chip}</div><span>${esc(meta)}</span>${l.notes?`<span class="lt-d" title="${esc(l.notes)}">${esc(l.notes)}</span>`:""}</div>
 <div class="lr">${(()=>{const c=sq*l.cost,pr=lotProfit(l);if(!sq)return "";const r=c?pr/c*100:null;return `<div class="li"><b class="${pr>=0?"pos":"neg"}">${eur(pr)}</b><span>Profit</span></div>`+(r===null?"":`<div class="li"><b class="${r>=0?"pos":"neg"}">${r<0?"−":""}${Math.abs(r).toFixed(0)}%</b><span>ROI</span></div>`)})()}<div class="li"><b>${eur(inv(l))}</b><span>Invested</span></div><span class="tk">${l.qty} ticket${l.qty===1?"":"s"}</span></div></summary>
 <div class="lb"><div class="tw"><table class="tt"><thead><tr><th class="ck"></th><th>Seat</th><th>Paid</th><th>Sold on</th><th>Revenue</th><th>Profit</th><th>ROI</th><th>Status</th><th>Transfer</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>
@@ -1308,7 +1324,7 @@ $("kpis").innerHTML=[
 ["Tickets",String(sold+left),`<b style="color:var(--pos)">${sold} sold</b> · ${left} unsold`,"#8b7bff",""]]
 .map(([a,b,c,col,cls])=>`<div class="card acc" style="--c:${col}"><div class="lbl">${a}</div><div class="num ${cls}">${b}</div>${c?`<div class="trend">${c}</div>`:""}</div>`).join("");
 {const tc=$("kpis").children[3];if(tc){tc.classList.add("obj");tc.insertAdjacentHTML("beforeend",'<div class="k-obj" aria-hidden="true"><div class="k-stub b"></div><div class="k-stub f"><i class="k-bc"></i><img src="icons/mark.png" alt=""></div></div>')}
-const nd=new Date();$("ptitle").innerHTML=nd.toLocaleDateString("en-US",{month:"long"})+" <span>"+nd.getFullYear()+"</span>";
+const nd=new Date();$("ptitle").innerHTML='<span class="pt-wm" aria-label="OOS"><span aria-hidden="true">O</span><span class="mac" aria-hidden="true">O</span><span aria-hidden="true">S</span></span><i class="pt-sep" aria-hidden="true"></i>'+nd.toLocaleDateString("en-US",{month:"long"})+" <span>"+nd.getFullYear()+"</span>";
 $("nn-t").textContent=S.lots.length;$("nn-p").textContent=S.pulls.length;const tc2=k=>S.lots.filter(l=>(l.transfer||"no")===k).length;$("nn-y").textContent=tc2("yes");$("nn-q").textContent=tc2("pending");$("nn-n").textContent=tc2("no")}
 /* tickets page cards */
 const invest=S.lots.reduce((a,l)=>a+l.qty*l.cost,0),tcard=(a,b,c,cls)=>'<div class="card"><div class="lbl">'+a+'</div><div class="num '+cls+'">'+b+'</div>'+(c?'<div class="trend">'+c+'</div>':"")+'</div>';
@@ -1350,6 +1366,10 @@ if(k!==view)history.pushState(null,"",k==="dash"?location.pathname+location.sear
 addEventListener("popstate",()=>{setNav(false);showView(fromHash())});
 /* ---- actions ---- */
 $("fl").oninput=render;
+const peSave=inp=>{if(!editP)return;const lot=S.lots.find(l=>l.id===inp.dataset.l),v=parseFloat(inp.value);editP=null;
+if(lot&&inp.value.trim()!==""&&setProfit(lot,+inp.dataset.i,v)){persist();note("Profit updated.")}render()};
+$("lots").addEventListener("keydown",e=>{const inp=e.target.closest(".pe-in");if(!inp)return;if(e.key==="Enter"){e.preventDefault();peSave(inp)}else if(e.key==="Escape"){editP=null;render()}});
+$("lots").addEventListener("focusout",e=>{const inp=e.target.closest(".pe-in");if(inp&&editP)peSave(inp)});
 $("lots").addEventListener("click",e=>{const g=e.target.closest(".gck"),r=e.target.closest(".rck");if(!g&&!r)return;
 const l=S.lots.find(x=>x.id===(g||r).dataset.l);if(!l)return;
 if(g){e.preventDefault();const keys=Array.from({length:l.qty},(_,i)=>l.id+":"+i),all=keys.every(k=>selT.has(k));keys.forEach(k=>all?selT.delete(k):selT.add(k));setTimeout(render)}
@@ -1386,6 +1406,7 @@ else if(a==="rs"&&lot){const tr=b.closest("tr"),d=tr.querySelector(".r-d").value
 if(!d||p===""||+p<0){note("Enter the sale date and the price.",1);return}
 lot.sales.push({id:uid(),date:d,qty:1,price:+p,seat:+b.dataset.i});sellRow=null;openIds.add(lot.id);persist();render()}
 else if(a==="rx"){sellRow=null;render()}
+else if(a==="pe"&&lot){editP={l:lot.id,i:+b.dataset.i};openIds.add(lot.id);render();setTimeout(()=>{const x=document.querySelector(".pe-in");if(x){x.focus();x.select()}},20)}
 else if(a==="ms"){closeMenus();mailSync()}
 else if(a==="mk"){closeMenus();kwEdit=true;render()}
 else if(a==="kws"){S.mailKw=$("kwt").value.split(/\n|,/).map(s=>s.trim()).filter(Boolean).slice(0,20);kwEdit=false;persist();render();note("Keywords saved.")}

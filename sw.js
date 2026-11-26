@@ -1,5 +1,5 @@
 // Offline app shell. Bump VERSION when shipping changes so phones drop the old cache.
-const VERSION = "tt-v27";
+const VERSION = "tt-v28";
 const SHELL = [
   "./",
   "index.html",

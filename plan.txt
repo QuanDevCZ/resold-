@@ -245,3 +245,6 @@ Kept on purpose: neon chart, recap ticket + red lines, pink accent (Add New, act
 - Sidebar can be closed on desktop: panel icon top-right of the sidebar closes it (slides out, content
   takes the full width); the ☰ button in the top bar or Ctrl K brings it back. Remembered per device
   (tt-side). On phones the same icon closes the drawer. sw.js tt-v27.
+- Tickets: Profit of a sold ticket is click-to-edit (Enter saves, Esc cancels, typed in € or Kč as shown);
+  sale price = cost + profit, a multi-ticket sale is split so only that ticket changes.
+- Dashboard title: OŌS wordmark | month + muted year. sw.js tt-v28.
