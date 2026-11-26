@@ -128,7 +128,7 @@ input,select,textarea{background:#0f0f10;border-color:var(--line);border-radius:
 .mc-pill{position:absolute;top:3px;bottom:3px;left:3px;width:46px;border-radius:999px;background:rgba(255,46,136,.16);box-shadow:inset 0 0 0 1px rgba(255,46,136,.4);transition:transform .2s cubic-bezier(.23,1,.32,1)}
 .mc-v{display:flex;margin:16px 0 0;font-size:44px;font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
 .mc-v.neg{color:var(--neg)}
-.mc-n{display:inline-flex}
+.mc-n{display:inline-flex;white-space:pre}
 .vh-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .rd{position:relative;display:inline-block;height:1em;overflow:hidden;line-height:1}
 .rd-0{visibility:hidden}
@@ -192,7 +192,11 @@ input,select,textarea{background:#0f0f10;border-color:var(--line);border-radius:
 .rx-np{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px 0 0;font-size:12px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:#a59aa3}
 .rx-np:before,.rx-np:after{content:"";width:40px;height:1px;background:#4e3a45}
 .rx-hero{position:relative;margin:0 -24px}
-.rx-wave{position:absolute;left:0;top:50%;width:100%;height:90%;transform:translateY(-50%);pointer-events:none}
+/* background-paths ribbon behind the top half of the ticket; faded at top/bottom and quieter behind the numbers */
+.rx .in{position:relative}
+.rx .in>*:not(.rx-bpw){position:relative;z-index:1}
+.rx-bpw{position:absolute;inset:0;pointer-events:none;z-index:0;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 14%,#000 86%,transparent)}
+.rx-bp{display:block;width:100%;height:100%;opacity:0;transition:opacity .5s ease-out}
 .rx-bn{position:relative;font-size:clamp(72px,23vw,148px);font-weight:900;line-height:1;letter-spacing:-.04em;color:#3db57d;margin:6px 0 0;white-space:nowrap}
 .rx-bn.neg{color:#ff6b7f}
 .rx-bn sup{font-size:.32em;vertical-align:top;position:relative;top:.08em;margin-left:.06em;opacity:.85}
@@ -326,12 +330,12 @@ details.lot[open] .chev{transform:rotate(180deg)}
 .li span{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .tk{background:var(--acc);color:#fff;font-size:13px;font-weight:500;padding:6px 14px;border-radius:999px;white-space:nowrap}
 .lb{border-top:1px solid var(--line)}
-.tt{min-width:700px}
+.tt{min-width:820px}
 .tt th{padding:12px 16px;font-size:10.5px;letter-spacing:.14em}
 .tt td{padding:11px 16px;font-size:14px;font-variant-numeric:tabular-nums}
 .tt th:first-child,.tt td:first-child{padding-left:20px}
 .tt th:last-child,.tt td:last-child{padding-right:20px}
-.tt th:nth-child(8),.tt td:nth-child(8),.tt th:nth-child(9),.tt td:nth-child(9){text-align:center}
+.tt th:nth-child(8),.tt td:nth-child(8),.tt th:nth-child(9),.tt td:nth-child(9),.tt th:nth-child(10),.tt td:nth-child(10){text-align:center}
 .tt td.mono{font-size:13px;color:var(--mute)}
 .tt tr:last-child td{border-bottom:0}
 .gck,.rck{width:16px;height:16px;margin:0;padding:0;flex:none;accent-color:var(--acc);cursor:pointer}
@@ -447,51 +451,307 @@ details.lot>summary{padding:10px 16px;gap:12px}
 .ptt th{padding-top:11px;padding-bottom:9px}
 .ptt th.ck,.ptt td.ck{padding-left:16px}
 .pno{white-space:normal!important;min-width:180px;max-width:340px;font-size:13px;color:var(--ink);opacity:.8}
-.ptt{min-width:900px}
+.ptt{min-width:1010px}
 .tst,.pst{padding:3px 24px 3px 9px}
 .ib{width:28px;height:28px}
 #dash .mc-ch{min-height:180px}
 .ev-li li{padding:9px 0}
 @media (max-width:719px){.kpis .card{padding:11px 13px}.kpis .num{font-size:clamp(19px,5.8vw,24px)}}
+/* ---- neon chart (2026-11-26, from the user's purple-neon reference) ---- */
+#dash.neon #mcc,#dash.neon #mcdim{stroke:url(#mcgS);stroke-width:2.4}
+#dash.neon #mcc{filter:drop-shadow(0 0 4px rgba(200,150,255,.9)) drop-shadow(0 0 12px rgba(255,100,220,.45))}
+#dash.neon #mcdim{stroke-opacity:.22}
+#dash.neon #mca{fill:url(#mcgF);fill-opacity:1}
+#dash.neon .mc-ch{background:radial-gradient(70% 90% at 50% 105%,rgba(150,90,255,.14),transparent 70%)}
+#dash.neon .mc-end{background:#f3edff;box-shadow:0 0 0 4px var(--surf),0 0 10px #ff7ae0,0 0 22px #b98cff}
+#dash.neon .mc-dot{background:#f3edff;box-shadow:0 0 0 4px var(--surf),0 0 12px #c08cff}
+/* new mark: top bar + recap */
+.tb-i{object-fit:cover;background:#000}
+.rx-pk{display:inline-flex;align-items:center;gap:8px}
+.rx-logo{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:#000}
+.ev-t{flex:none;width:136px;text-align:center;font-size:11.5px;padding:3px 8px}
+@media (max-width:600px){.ev-li li{flex-wrap:wrap;row-gap:6px}.ev-m{flex-basis:100%}.ev-r{flex:1}.ev-t{width:auto}}
+/* currency switch in the top bar */
+.cur{flex:none;display:inline-flex;padding:3px;gap:2px;border:1px solid var(--line);border-radius:10px;background:#0f0f10}
+.cur button{min-width:34px;padding:5px 9px;border:0;border-radius:7px;background:none;color:var(--mute);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.cur button:hover{color:var(--ink)}
+.cur button[aria-pressed="true"]{background:rgba(255,46,136,.16);color:var(--acc)}
+.lr .li{min-width:64px}
+@media (max-width:600px){.lr{gap:12px}.lr .li{min-width:0}}
+/* per-ticket transfer pill: green / orange / red, same shape as the status pill */
+.ttr,.ppo{width:auto;-webkit-appearance:none;appearance:none;font:inherit;font-size:12px;font-weight:500;padding:3px 24px 3px 9px;border-radius:7px;border:1px solid;cursor:pointer;background-repeat:no-repeat;background-position:right 8px center;background-size:10px}
+.ttr.yes,.ppo.yes{color:var(--pos);background-color:rgba(52,210,123,.1);border-color:rgba(52,210,123,.3);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2334d27b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")}
+.ttr.pending{color:#ff9f40;background-color:rgba(255,159,64,.1);border-color:rgba(255,159,64,.35);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ff9f40' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")}
+.ttr.no,.ppo.no{color:#ff6b7a;background-color:rgba(255,92,108,.1);border-color:rgba(255,92,108,.32);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ff6b7a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")}
+.ttr option,.ppo option{color:var(--ink);background:#141415}
+.ttr:hover,.ppo:hover{filter:brightness(1.15)}
+.tt th:nth-child(2),.tt td:nth-child(2){text-align:left}
+/* all-time view has no previous period */
+#dash.allt #mcp,#dash.allt .mc-pp,#dash.allt .mc-dot.tw{visibility:hidden}
+.bk-tr{width:auto;padding:7px 10px;font-size:13px;align-self:flex-end}
+.bk-sep{width:1px;align-self:stretch;background:#2c2c30;margin:0 2px}
+/* Profit / Revenue switch on the chart */
+.mc-lw{display:flex;align-items:center;gap:8px;min-width:0}
+.mc-m{display:inline-flex;flex:none;padding:3px;gap:2px;border:1px solid var(--line);border-radius:999px;background:#0f0f10}
+.mc-m button{padding:5px 12px;border:0;border-radius:999px;background:none;color:var(--mute);font:inherit;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:color .15s,background-color .15s}
+.mc-m button:hover{color:var(--ink)}
+.mc-m button[aria-pressed="true"]{background:rgba(192,140,255,.16);color:#d9c2ff}
+/* ---- unslop pass on the Tickets page (2026-11-26) — after unslop by Damir Sokolovsky (@heydamir), CC BY 4.0 ----
+   Direction: OOS tracks one person's ticket resale. Character: sharp, nocturnal, a little flashy.
+   World: event night, arenas after dark, ticket stubs. Moments: the money line per group, the opened ticket list.
+   Signature: the perforated ticket-stub edge. Pink stays the accent but only on Add New, the active tab and the profit figure. */
+
+/* color: no pink wash behind the header on this page */
+body[data-view="tickets"]{background:#0a0a0b}
+
+/* spacing: everything on the 4px grid */
+#p1 h1.vh{margin:4px 0 4px}
+#p1 .btn{padding:8px 12px}
+#p1 .btn.sm{padding:6px 12px}
+#p1 .kpis{gap:12px}
+#p1 .kpis .card{padding:12px 16px}
+#p1 .srch{margin-top:16px}
+#p1 .srch input{padding:8px 0}
+#p1 .ftabs{margin-top:12px;gap:4px}
+#p1 .ftabs button{padding:6px 12px}
+#p1 .sortrow{margin:12px 0 8px}
+#p1 details.lot{margin-bottom:8px}
+#p1 details.lot>summary{padding:12px 16px;gap:12px}
+#p1 .tt th{padding:8px 16px}
+#p1 .tt td{padding:8px 16px}
+#p1 .tt th.ck,#p1 .tt td.ck{padding:8px 0 8px 16px;width:40px}
+#p1 .tt td.ck+td,#p1 .tt th.ck+th{padding-left:8px}
+#p1 .lnote{padding:12px 16px 0}
+#p1 .lf{margin-top:12px;padding:12px 16px 16px}
+#p1 .bulk{padding:12px 16px;gap:12px}
+
+/* type: sentence case, no wide tracking, tabular figures */
+#p1 .lbl,#p1 .tt th,#p1 label,#p1 .li span{text-transform:none;letter-spacing:0;font-size:12px;font-weight:500;color:#85858b}
+#p1 .li span{font-size:11px}
+#p1 .num,#p1 .li b,#p1 .tt td{font-variant-numeric:tabular-nums}
+#p1 .lnote .lbl{margin-bottom:4px}
+
+/* icons: one size, one stroke */
+#p1 svg{stroke-width:1.5}
+#p1 .ib svg,#p1 .srch svg,#p1 .ph-a svg:not(.dd-c){width:16px;height:16px}
+
+/* color: pink only where it means something — Add New, the active tab, the profit figure */
+#p1 .ftabs button[aria-pressed="true"]{background:#232325;color:var(--acc);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+#p1 .chips button{border-color:rgba(255,255,255,.08);background:transparent;border-radius:8px;padding:4px 10px}
+#p1 .chips button[aria-pressed="true"]{background:#232325;border-color:rgba(255,255,255,.1);color:var(--ink)}
+/* the ticket count is a count, not a badge */
+#p1 .tk{background:none;color:#a1a1a6;padding:0;border-radius:0;font-family:"Geist Mono",ui-monospace,monospace;font-size:12px;font-weight:400;min-width:64px;text-align:right}
+/* group chips and urgency: dot + quiet text instead of filled pills */
+#p1 .lt-n .pill{background:none;padding:0 0 0 12px;position:relative;font-size:12px;font-weight:500;color:#a1a1a6;border-radius:0}
+#p1 .lt-n .pill:before{content:"";position:absolute;left:0;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:currentColor}
+#p1 .lt-n .pill.ok:before{background:#4cc38a}
+#p1 .lt-n .pill.pend:before{background:#ff9f40}
+#p1 .lt-n .pill.no:before{background:#e5484d}
+#p1 .bdg.soon{color:var(--ink)}
+/* status + transfer: neutral control with a coloured dot, the dropdown stays */
+#p1 .tst,#p1 .ttr{color:var(--ink);background-color:transparent;border-color:rgba(255,255,255,.08);border-radius:8px;padding:4px 26px 4px 22px;
+background-image:radial-gradient(circle at 11px 50%,var(--dot) 3px,transparent 3.5px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2385858b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+background-repeat:no-repeat;background-position:0 0,right 9px center;background-size:100% 100%,10px;transition:background-color .15s cubic-bezier(.22,1,.36,1)}
+#p1 .tst:hover,#p1 .ttr:hover{filter:none;background-color:#19191b}
+#p1 .tst.sold,#p1 .ttr.yes{--dot:#4cc38a}
+#p1 .tst.stock,#p1 .ttr.pending{--dot:#ff9f40}
+#p1 .ttr.no{--dot:#e5484d}
+#p1 .stp.sold{color:var(--ink);background:none;border-color:rgba(255,255,255,.08);border-radius:8px}
+
+/* details: radii by size */
+#p1 .srch{border-radius:10px}
+#p1 .ftabs button,#p1 .btn,#p1 .trs,#p1 .bk-tr{border-radius:8px}
+
+/* signature: the opened group tears like a ticket stub — perforation with two notches */
+#p1 details.lot[open] .lb{position:relative;border-top:1px dashed rgba(255,255,255,.14)}
+#p1 details.lot[open] .lb:before,#p1 details.lot[open] .lb:after{content:"";position:absolute;top:-8px;width:16px;height:16px;border-radius:50%;background:#0a0a0b;border:1px solid var(--line);z-index:1}
+#p1 details.lot[open] .lb:before{left:-9px}
+#p1 details.lot[open] .lb:after{right:-9px}
+
+/* motion: one curve */
+#p1 .chev{transition:transform .2s cubic-bezier(.22,1,.36,1)}
+#p1 .ftabs button,#p1 .chips button,#p1 .ib{transition:color .15s cubic-bezier(.22,1,.36,1),background-color .15s cubic-bezier(.22,1,.36,1)}
+@media (max-width:600px){#p1 .tk{min-width:0}}
+/* ==== unslop pass on the whole app + sidebar shell (2026-11-26) — after unslop by Damir Sokolovsky (@heydamir), CC BY 4.0 ====
+   Graphite ramp, quiet chrome; colour lives in the neon chart, the recap, the money figures and the ticket-stub object. */
+html:root:root:root{--bg:#141415;--surf:#19191b;--ink:#ededed;--mute:#a1a1a6;--line:rgba(237,237,237,.08);--soft:#232325;color-scheme:dark}
+body,body[data-view="tickets"]{background:#141415}
+#p1 details.lot[open] .lb:before,#p1 details.lot[open] .lb:after{background:#141415}
+
+/* type: sentence case everywhere outside the recap ticket, mono for meta */
+.lbl,th,label,h2,.kv span,.li span,.mc-m button,.eyebrow{text-transform:none!important;letter-spacing:0!important}
+.lbl,th,label{font-size:12px;font-weight:500;color:#85858b}
+.kpis .trend,.ev-r,.mc-ax,.nv-n,.nv-c span{font-family:"Geist Mono",ui-monospace,monospace}
+.kpis .trend{font-size:12px;color:#85858b}
+.num{font-variant-numeric:tabular-nums}
+
+/* controls */
+.btn{padding:8px 12px;border-radius:8px}
+.btn.sm{padding:6px 12px}
+.btn.ghost{background:#19191b;border-color:var(--line)}
+.btn.ghost:hover{background:#232325}
+input,select,textarea{background:#0f0f10;border-color:var(--line)}
+.kpis{gap:12px}
+.kpis .card,#p1 .kpis .card{padding:16px 20px}
+.card,details,.panel,.sheet{border-color:var(--line)}
+
+/* top bar: breadcrumb + currency */
+.topbar{background:rgba(20,20,21,.92);border-bottom:1px solid var(--line);gap:10px}
+.tb-ic{display:inline-flex;color:#a1a1a6}.tb-ic svg{width:18px;height:18px;stroke-width:1.5}
+.tb-t{font-size:15px;font-weight:400}
+.cur{background:#0f0f10;border-color:var(--line)}
+.cur button[aria-pressed="true"]{background:#232325;color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+
+/* sidebar */
+.nav{background:#0f0f10;border-right:1px solid var(--line)}
+.nv-h{gap:10px;padding:16px 16px 12px;border-bottom:0}
+.nv-h img{width:28px;height:28px;border-radius:50%}
+.nv-wm{display:flex;gap:.3em;font-size:18px;font-weight:500;line-height:1}
+.nv-wm .mac{position:relative}
+.nv-wm .mac:before{content:"";position:absolute;left:50%;top:-.2em;width:.58em;height:.12em;border-radius:.03em;background:currentColor;transform:translateX(-50%)}
+.nv-s{display:flex;flex-direction:row;align-items:center;gap:8px;margin:4px 12px 16px;padding:0 6px 0 10px;height:36px;border:1px solid var(--line);border-radius:10px;background:#141415;color:#85858b;font-weight:400;cursor:text}
+.nv-s svg{flex:none;width:16px;height:16px;stroke-width:1.5}
+.nv-s input{flex:1;min-width:0;height:100%;padding:0;border:0;background:none;font-size:14px;border-radius:0}
+.nv-s input:focus{outline:none}.nv-s:focus-within{border-color:rgba(237,237,237,.2)}
+.kc{flex:none;padding:1px 5px;border:1px solid var(--line);border-radius:5px;background:#19191b;font:500 11px "Geist Mono",ui-monospace,monospace;color:#85858b}
+.nv-b{padding:0 12px 12px;border-top:1px solid var(--line)}
+.nv-l{margin:24px 10px 8px;font:400 12px "Geist Mono",ui-monospace,monospace;color:#85858b;text-transform:none;letter-spacing:0}
+.nv-i{height:36px;padding:0 10px;gap:10px;margin-bottom:2px;border-radius:8px;font-size:14px;font-weight:400;color:#a1a1a6;transition:color .15s cubic-bezier(.22,1,.36,1),background-color .15s cubic-bezier(.22,1,.36,1)}
+.nv-i svg{width:18px;height:18px;stroke-width:1.5}
+.nv-i:hover{color:var(--ink);background:#19191b}
+.nv-i[aria-current="true"]{background:#232325;color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 1px rgba(255,255,255,.05)}
+.nv-i[aria-current="true"]:before{display:none}
+.nv-n{margin-left:auto;font-size:12px;color:#85858b}
+.nv-d{display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;font-size:14px;color:#a1a1a6}
+.nv-d i{flex:none;width:8px;height:8px;margin:0 5px;border-radius:50%}
+.nv-f{padding:12px;border-top:1px solid var(--line)}
+.nv-c{background:#141415;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.nv-c b{font-weight:500;font-size:14px}
+.nv-c span{font-size:12px;color:#85858b}
+.nv-bar{background:#232325;height:4px}.nv-bar i{background:#ededed}
+
+/* dashboard header: the period as the title, status as a quiet mono line */
+.ptitle{margin:4px 0 0;font-size:34px;font-weight:400;letter-spacing:-.02em;line-height:1.15}
+.ptitle span{color:#6e6e74}
+.eyebrow{font:400 12px "Geist Mono",ui-monospace,monospace;color:#85858b}
+.eyebrow .dot{width:6px;height:6px;background:#85858b;box-shadow:none}
+.view[data-view="dash"] header{display:block}
+.view[data-view="dash"] header .eyebrow{margin-top:8px}
+
+/* dashboard chart controls neutral, the line keeps the neon */
+.mc-per,.mc-m{background:#0f0f10;border-color:var(--line)}
+.mc-pill{background:#232325;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 1px rgba(255,255,255,.05)}
+.mc-per button[aria-pressed="true"]{color:var(--ink)}
+.mc-m button{font-size:12px;font-weight:500;padding:5px 12px}
+.mc-m button[aria-pressed="true"]{background:#232325;color:var(--ink)}
+/* upcoming events: status as dot + text, aligned */
+.ev-t{background:none!important;border:0;padding:0 0 0 14px;width:128px;text-align:left;position:relative;font-size:12px;font-weight:500;color:#a1a1a6!important;border-radius:0}
+.ev-t:before{content:"";position:absolute;left:0;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%}
+.ev-t.ok:before{background:#4cc38a}.ev-t.pend:before{background:#ff9f40}.ev-t.no:before{background:#e5484d}
+.ev-r .dd.soon{color:var(--ink)}
+.ev-r{font-size:12px}
+
+/* pulling: status + payout as neutral controls with a coloured dot */
+.pst,.ppo{color:var(--ink)!important;background-color:transparent!important;border-color:var(--line)!important;border-radius:8px;padding:4px 26px 4px 22px!important;
+background-image:radial-gradient(circle at 11px 50%,var(--dot) 3px,transparent 3.5px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2385858b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")!important;
+background-repeat:no-repeat;background-position:0 0,right 9px center!important;background-size:100% 100%,10px!important}
+.pst:hover,.ppo:hover{filter:none;background-color:#19191b!important}
+.pst.sold,.ppo.yes{--dot:#4cc38a}.pst.stock{--dot:#ff9f40}.ppo.no{--dot:#e5484d}
+.ptt th,.ptt td{padding:8px 16px}
+.ptt th.ck,.ptt td.ck{padding:8px 0 8px 16px}
+.fbar select{background:#19191b}
+
+/* the moment: two rendered ticket stubs in the Tickets card (built in CSS) */
+.kpis .card.obj{position:relative;overflow:hidden}
+.k-obj{position:absolute;right:20px;top:50%;width:132px;height:84px;transform:translateY(-50%);pointer-events:none}
+.k-stub{position:absolute;width:118px;height:60px;border-radius:8px;background:linear-gradient(140deg,#38383d 0%,#1f1f22 55%,#2a2a2e 100%);
+box-shadow:0 12px 24px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);
+-webkit-mask:radial-gradient(circle 6px at 74% 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 6px at 74% 100%,#0000 97%,#000) bottom/100% 51% no-repeat;
+mask:radial-gradient(circle 6px at 74% 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 6px at 74% 100%,#0000 97%,#000) bottom/100% 51% no-repeat}
+.k-stub.b{right:0;top:2px;transform:rotate(-4deg);opacity:.55}
+.k-stub.f{right:10px;top:18px;transform:rotate(-12deg)}
+.k-stub.f:before{content:"";position:absolute;left:74%;top:6px;bottom:6px;border-left:1px dashed rgba(255,255,255,.22)}
+.k-bc{position:absolute;left:10px;top:12px;bottom:12px;width:44%;background:repeating-linear-gradient(90deg,rgba(255,255,255,.55) 0 1px,transparent 1px 3px,rgba(255,255,255,.35) 3px 5px,transparent 5px 7px);border-radius:1px;opacity:.7}
+.k-stub.f img{position:absolute;right:7px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;opacity:.9}
+.k-stub.f:after{content:"";position:absolute;left:10px;right:36%;bottom:7px;height:2px;border-radius:1px;background:var(--acc);opacity:.85}
+
+/* desktop: persistent sidebar, the drawer is phone-only */
+@media (min-width:1024px){
+.hb,.scrim{display:none!important}
+.nav{transform:none!important;width:248px;transition:none;z-index:25}
+html.nav-open{overflow:auto}
+.topbar{margin-left:248px;height:56px;padding:0 32px}
+.tb-i{display:none}
+main{margin-left:248px;padding:24px 32px 48px}
+main>.view{max-width:1600px}
+#kpis{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.4fr)}
+}
+@media (max-width:1023px){.tb-ic{display:none}}
+@media (max-width:719px){.k-obj{display:none}}
+.ev-r{font-family:inherit;font-size:12.5px}
+.ev-t{width:112px}
+.ev-m b{font-weight:500}
+.nv-h .nv-wm{display:flex;font-size:20px;font-weight:500;gap:.34em;margin-top:2px}
+.ptt{min-width:940px}
+.pno{max-width:260px}
+.ptt th,.ptt td{padding:8px 12px}
+.ptt th.ck,.ptt td.ck{width:36px}
+/* close / reopen the sidebar */
+.nv-x{margin-left:auto;display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:8px;background:none;color:#85858b;cursor:pointer;transition:color .15s cubic-bezier(.22,1,.36,1),background-color .15s cubic-bezier(.22,1,.36,1)}
+.nv-x svg{width:18px;height:18px}
+.nv-x:hover{color:var(--ink);background:#19191b}
+@media (min-width:1024px){
+.nav{transition:transform .3s cubic-bezier(.22,1,.36,1)}
+html.side-closed .nav{transform:translateX(-102%)!important}
+html.side-closed .topbar,html.side-closed main{margin-left:0}
+html.side-closed .hb{display:grid!important;width:36px;height:36px;border-radius:8px;background:none;border:1px solid var(--line)}
+html.side-closed .hb:hover{background:#19191b}
+}
+@media (prefers-reduced-motion:reduce){.nav{transition:none!important}}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header class="topbar">
 <button class="hb" id="hb" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-<span class="tb-t" id="tbt">Dashboard</span>
-<img class="tb-i" src="icons/icon-192.png" alt="">
+<span class="tb-ic" id="tbic" aria-hidden="true"></span><span class="tb-t" id="tbt">Dashboard</span>
+<div class="cur" id="cur" role="group" aria-label="Currency"><button data-c="EUR" type="button" aria-label="Show euros">€</button><button data-c="CZK" type="button" aria-label="Show Czech crowns">Kč</button></div>
+<img class="tb-i" src="icons/mark.png" alt="OOS">
 </header>
 <div class="scrim" id="scrim"></div>
 <nav class="nav" id="nav" aria-label="Menu" tabindex="-1" style="outline:none" inert>
-<div class="nv-h"><img src="icons/icon-192.png" alt=""><div><b>OOS</b><span>Ticket tracker</span></div></div>
+<div class="nv-h"><img src="icons/mark.png" alt=""><b class="nv-wm" aria-label="OOS"><span aria-hidden="true">O</span><span class="mac" aria-hidden="true">O</span><span aria-hidden="true">S</span></b><button class="nv-x" id="nvx" type="button" aria-label="Close sidebar" title="Close sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M9.5 4.5v15"/></svg></button></div>
+<label class="nv-s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="gs" type="search" placeholder="Search" aria-label="Search tickets" autocomplete="off"><span class="kc">Ctrl</span><span class="kc">K</span></label>
 <div class="nv-b">
-<p class="nv-l">Overview</p>
+<p class="nv-l">Navigation</p>
 <button class="nv-i" data-nav="dash" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>Dashboard</button>
-<p class="nv-l">Sales</p>
-<button class="nv-i" data-nav="tickets" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5a1 1 0 0 1 1-1h15a1 1 0 0 1 1 1V10a2 2 0 0 0 0 4v2.5a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V14a2 2 0 0 0 0-4z"/><path d="M14.5 7v10" stroke-dasharray="2 2.2"/></svg>Tickets</button>
-<button class="nv-i" data-nav="pulling" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h15l-3.5-3.5M20 16H5l3.5 3.5"/></svg>Pulling</button>
+<button class="nv-i" data-nav="tickets" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5a1 1 0 0 1 1-1h15a1 1 0 0 1 1 1V10a2 2 0 0 0 0 4v2.5a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V14a2 2 0 0 0 0-4z"/><path d="M14.5 7v10" stroke-dasharray="2 2.2"/></svg>Tickets<span class="nv-n" id="nn-t"></span></button>
+<button class="nv-i" data-nav="pulling" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h15l-3.5-3.5M20 16H5l3.5 3.5"/></svg>Pulling<span class="nv-n" id="nn-p"></span></button>
 <p class="nv-l">System</p>
 <button class="nv-i" data-nav="data" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3.5H7A1.5 1.5 0 0 0 5.5 5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3.5V8h4.5M9 12.5h6M9 16h6"/></svg>Data &amp; export</button>
 <button class="nv-i" data-nav="sync" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7.1 9.3 4.6 4.6 0 0 0 7 18.5z"/></svg>Sync</button>
+<p class="nv-l">Transfers</p>
+<div class="nv-d"><i style="background:#4cc38a"></i>Transferred<span class="nv-n" id="nn-y"></span></div>
+<div class="nv-d"><i style="background:#ff9f40"></i>Pending transfer<span class="nv-n" id="nn-q"></span></div>
+<div class="nv-d"><i style="background:#e5484d"></i>Not transferred<span class="nv-n" id="nn-n"></span></div>
 </div>
 <div class="nv-f"><div class="nv-c"><b id="nvc"></b><span id="nvs"></span><div class="nv-bar"><i id="nvb"></i></div></div></div>
 </nav>
 <main>
 <section class="view" data-view="dash">
 <header>
+<h1 class="ptitle" id="ptitle"></h1>
 <div class="eyebrow"><i class="dot" id="dot"></i><span id="sync">Starting…</span></div>
-<h1 class="brand" aria-label="OOS"><span aria-hidden="true">O</span><span class="mac" aria-hidden="true">O</span><span aria-hidden="true">S</span></h1>
 </header>
 <div class="kpis" id="kpis"></div>
 
 <!-- metric card: plain-JS port of Kokonut UI's metric-card (MIT, @dorianbaffier, kokonutui.com) -->
 <section class="card mc" id="dash" aria-label="Profit">
-<div class="mc-h"><p class="lbl mc-l" id="mcl">Profit</p><div class="mc-per" id="mcper"><span class="mc-pill" aria-hidden="true"></span><button data-p="7" type="button">7D</button><button data-p="30" type="button">30D</button><button data-p="90" type="button">90D</button></div></div>
+<div class="mc-h"><div class="mc-lw"><div class="mc-m" id="mcm" role="group" aria-label="Graph"><button data-m="profit" type="button">Profit</button><button data-m="revenue" type="button">Revenue</button></div><span class="lbl mc-l" id="mcl"></span></div><div class="mc-per" id="mcper"><span class="mc-pill" aria-hidden="true"></span><button data-p="7" type="button">7D</button><button data-p="30" type="button">30D</button><button data-p="90" type="button">90D</button><button data-p="0" type="button">All</button></div></div>
 <p class="mc-v" id="mcvw"><span class="vh-sr" id="mcsr"></span><span class="mc-n" id="mcv" aria-hidden="true"></span></p>
 <div class="mc-d"><span id="mcd"></span><span class="mc-cap" id="mccap" aria-live="polite"></span><button class="mc-clr" id="mcclr" type="button" hidden>Clear</button></div>
 <div class="mc-ch" id="mcch" role="slider" tabindex="0" aria-valuemin="1">
-<svg viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="mclip"><rect id="mclr" x="0" y="-10" width="400" height="140"/></clipPath></defs>
+<svg viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="mcgS" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="400" y2="0"><stop offset="0" stop-color="#b98cff"/><stop offset=".22" stop-color="#ff7ae0"/><stop offset=".5" stop-color="#efe8ff"/><stop offset=".78" stop-color="#c6a6ff"/><stop offset="1" stop-color="#f3edff"/></linearGradient><linearGradient id="mcgF" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="120"><stop offset="0" stop-color="#c08cff" stop-opacity=".8"/><stop offset=".5" stop-color="#8a52f0" stop-opacity=".38"/><stop offset="1" stop-color="#2a1552" stop-opacity="0"/></linearGradient><clipPath id="mclip"><rect id="mclr" x="0" y="-10" width="400" height="140"/></clipPath></defs>
 <line class="mc-base" x1="0" x2="400" y1="119.5" y2="119.5" vector-effect="non-scaling-stroke"/>
 <path id="mcp" class="mc-prev" vector-effect="non-scaling-stroke"/>
 <path id="mca" clip-path="url(#mclip)"/>
@@ -508,7 +768,7 @@ details.lot>summary{padding:10px 16px;gap:12px}
 </section>
 
 <section class="view" id="p1" data-view="tickets" hidden>
-<div class="ph"><div><h1 class="vh">Tickets</h1><p class="sub">Manage your ticket groups, sales and transfers.</p></div>
+<div class="ph"><div><h1 class="vh">Tickets</h1><p class="sub">Manage your ticket groups, sales and transfers</p></div>
 <div class="ph-a">
 <div class="dd"><button class="btn ghost" data-dd="m-sync" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>Sync<svg class="dd-c" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
 <div class="menu" id="m-sync" hidden><button data-a="ms" type="button"><b>Sync ticket emails</b><span id="msl">Search Gmail for ticket emails</span></button><button data-a="mk" type="button"><b>Search keywords</b><span id="mkl"></span></button></div></div>
@@ -518,30 +778,30 @@ details.lot>summary{padding:10px 16px;gap:12px}
 <button class="btn ghost" data-a="im" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 19.5h14"/></svg>Import</button>
 <button class="btn" data-a="nl" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Add New</button></div></div>
 <div class="kpis" id="tkpis"></div>
-<label class="srch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="fl" type="search" placeholder="Search events, notes or sector…" aria-label="Search tickets"></label>
+<label class="srch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="fl" type="search" placeholder="Search" aria-label="Search tickets"></label>
 <div class="ftabs" id="ftab" aria-label="Show"><button data-f="all" type="button">All</button><button data-f="stock" type="button">In Stock</button><button data-f="sold" type="button">Sold</button><button data-f="tr" type="button">Transferred</button></div>
 <div class="sortrow"><span class="mu">Sort by:</span><div class="chips" id="fsort"><button data-s="date" type="button">Event date</button><button data-s="name" type="button">Name</button><button data-s="inv" type="button">Invested</button><button data-s="profit" type="button">Profit</button><button data-s="roi" type="button">ROI</button></div><span class="cnt" id="lcount"></span></div>
 <div id="lots"></div>
-<div class="bulk" id="bulk" hidden><b id="bkn"></b><div class="bk-s"><label>Sold on<input type="date" id="bkd"></label><label>Price each (€)<input type="number" id="bkp" min="0" step="0.01" placeholder="€"></label><button class="btn sm" data-a="bs" type="button">Mark sold</button></div><button class="btn ghost sm" data-a="bu" type="button">Mark in stock</button><button class="btn ghost sm" data-a="bc" type="button">Clear</button></div>
+<div class="bulk" id="bulk" hidden><b id="bkn"></b><div class="bk-s"><label>Sold on<input type="date" id="bkd"></label><label>Price each (€)<input type="number" id="bkp" min="0" step="0.01" placeholder="€"></label><button class="btn sm" data-a="bs" type="button">Mark sold</button></div><button class="btn ghost sm" data-a="bu" type="button">Mark in stock</button><select class="bk-tr" id="bktr" aria-label="Set transfer status of the selected tickets"><option value="">Set transfer…</option><option value="yes">Transferred</option><option value="pending">Pending transfer</option><option value="no">Not transferred</option></select><button class="btn ghost sm" data-a="bc" type="button">Clear</button></div>
 </section>
 
 <section class="view" id="p2" data-view="pulling" hidden>
-<div class="ph"><div><h1 class="vh">Pulling</h1><p class="sub">Track the tickets you pull for clients.</p></div>
+<div class="ph"><div><h1 class="vh">Pulling</h1><p class="sub">Track the tickets you pull for clients</p></div>
 <div class="ph-a">
 <div class="dd"><button class="btn ghost" data-dd="m-pexp" type="button" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>Export<svg class="dd-c" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
 <div class="menu r" id="m-pexp" hidden><button data-a="x2" type="button"><b>Pulling CSV</b><span>All pulling sales</span></button><button data-a="x4" type="button"><b>Backup (JSON)</b><span>Everything, to restore later</span></button></div></div>
 <button class="btn ghost" data-a="im" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 19.5h14"/></svg>Import</button>
 <button class="btn" data-a="np" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Add New</button></div></div>
 <div class="kpis" id="pkpis"></div>
-<div class="fbar"><label class="srch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="pfl" type="search" placeholder="Search client, event or notes…" aria-label="Search pulling sales"></label>
+<div class="fbar"><label class="srch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="pfl" type="search" placeholder="Search" aria-label="Search pulling sales"></label>
 <select id="pst" aria-label="Status"><option value="all">All status</option><option value="yes">Transferred</option><option value="no">Not transferred</option></select>
 <select id="pmo" aria-label="Month"><option value="all">All months</option></select></div>
 <div class="card ptw tw" id="pulls"></div>
-<div class="bulk" id="pbulk" hidden><b id="pbn"></b><button class="btn sm" data-a="pbt" type="button">Mark transferred</button><button class="btn ghost sm" data-a="pbu" type="button">Mark not transferred</button><button class="btn ghost sm" data-a="pbc" type="button">Clear</button></div>
+<div class="bulk" id="pbulk" hidden><b id="pbn"></b><button class="btn sm" data-a="pbt" type="button">Mark transferred</button><button class="btn ghost sm" data-a="pbu" type="button">Mark not transferred</button><span class="bk-sep" aria-hidden="true"></span><button class="btn sm" data-a="pbp" type="button">Mark paid out</button><button class="btn ghost sm" data-a="pbq" type="button">Mark not paid out</button><button class="btn ghost sm" data-a="pbc" type="button">Clear</button></div>
 </section>
 <section class="view" data-view="data" hidden>
 <h1 class="vh">Data &amp; export</h1>
-<p class="sub">Download your data or bring it in from a file.</p>
+<p class="sub">Download your data or bring it in from a file</p>
 <div class="panel">
 <div class="row" style="margin-top:0">
 <button class="btn ghost sm" id="e1" type="button">Export tickets CSV</button>
@@ -557,7 +817,7 @@ details.lot>summary{padding:10px 16px;gap:12px}
 
 <section class="view" data-view="sync" hidden>
 <h1 class="vh">Sync</h1>
-<p class="sub">Keep your phone and computer on the same data.</p>
+<p class="sub">Keep your phone and computer on the same data</p>
 <div class="panel" id="acct"></div>
 </section>
 </main>
@@ -565,7 +825,7 @@ details.lot>summary{padding:10px 16px;gap:12px}
 <div id="ov" class="ov" hidden></div>
 
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const KEY="ticket-ledger-v2",META="ticket-ledger-meta";
@@ -576,7 +836,10 @@ try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&Array.isArray(d.
 try{const m=JSON.parse(localStorage.getItem(META)||"null");if(m){rev=+m.rev||0;pending=!!m.pending}}catch(e){}
 const norm=()=>S.lots.forEach(l=>{if(!l.transfer)l.transfer=l.transferred?"yes":"no"});norm();
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const money=n=>(n<0?"−":"")+"€"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+let CUR="EUR";try{if(localStorage.getItem("tt-cur")==="CZK")CUR="CZK"}catch(e){}
+/* Kč shown whole, Czech style ("12 345 Kč"), converted at the app's fixed rate (CZK, below) */
+const czk=n=>{const v=Math.round(n*CZK);return(v<0?"−":"")+Math.abs(v).toLocaleString("en-US").replace(/,/g," ")+" Kč"};
+const money=n=>CUR==="CZK"?czk(n):(n<0?"−":"")+"€"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const mname=k=>{const[y,m]=k.split("-");return new Date(+y,+m-1,1).toLocaleDateString("en-US",{month:"long",year:"numeric"})};
 const fd=d=>d?new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"–";
@@ -590,7 +853,7 @@ const sb=window.supabase&&CFG.url&&CFG.key&&!/YOUR_/.test(CFG.url+CFG.key)?supab
 let user=null,timer=null,chan=null;
 const stat=(t,bad)=>{$("sync").textContent=t;$("sync").style.color=bad?"var(--neg)":"var(--mute)";$("dot").style.background=$("dot").style.boxShadow=bad?"var(--neg)":"";if(bad)$("dot").style.boxShadow="0 0 10px var(--neg)"};
 const saveLocal=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem(META,JSON.stringify({rev,pending}))}catch(e){}};
-const idle=()=>stat(!sb?"Saved on this device only.":!user?"Saved on this device only (sign in below to sync).":!pending?"Synced to your account.":navigator.onLine?"Saving…":"Offline. Saved here, will sync when back online.");
+const idle=()=>stat(!sb?"Saved on this device only":!user?"Saved on this device only · sign in on the Sync page to sync":!pending?"Synced to your account":navigator.onLine?"Saving…":"Offline · saved here, syncs when back online");
 function persist(){rev=Date.now();pending=true;saveLocal();if(!user){idle();return}stat("Saving…");clearTimeout(timer);timer=setTimeout(push,400)}
 async function push(){
 if(!user||!pending||!navigator.onLine){idle();return}
@@ -652,17 +915,54 @@ let editing=null,recap=null;
 const TR={no:"Not transferred yet",pending:"Pending transfer",yes:"Transferred"};
 const CZK=24.32,sp=n=>Math.round(Math.abs(n)).toLocaleString("en-US").replace(/,/g," ");
 const dmy=d=>d?new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"date TBC";
-/* recap waves: each line is a sine pinched toward the middle; animating its phase makes it flow */
-function wavePath(ph,am,fr){let d="";for(let x=0;x<=400;x+=8){const env=.35+.65*Math.abs(Math.cos(Math.PI*x/400));d+=(x?"L":"M")+x+","+(50+am*env*Math.sin(x*fr+ph)).toFixed(1)}return d}
-let waveRaf=0;
-function animateWaves(){
-cancelAnimationFrame(waveRaf);
-if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
-const t0=performance.now();
-const tick=now=>{const ps=document.querySelectorAll(".rx-wave path");if(!ps.length||!recap)return;
-const t=(now-t0)/1000;ps.forEach(p=>{const [ph,am,fr,sp]=p.dataset.w.split(",").map(Number);p.setAttribute("d",wavePath(ph+t*sp,am*(.85+.15*Math.sin(t*.6+ph)),fr))});
-waveRaf=requestAnimationFrame(tick)};
-waveRaf=requestAnimationFrame(tick)}
+/* recap background: plain-JS port of Kokonut UI's background-paths (MIT, @dorianbaffier, kokonutui.com).
+   A ribbon of lines in three depth layers that keeps flowing and parts around the mouse, drawn in the recap's pink→red. */
+const BP={SAMPLES:64,OVER:.06,DRAW:1400,STAG:40,R:150,PUSH:56,
+LAYERS:[{w:1,o:.16,ph:.6,pace:.7,part:.45},{w:1.25,o:.26,ph:.3,pace:.85,part:.75},{w:1.5,o:.4,ph:0,pace:1,part:1}]};
+/* height of line s (-0.5..0.5 across the ribbon) at u (0..1 along it); the turn point and curve slide with time */
+function bpY(s,u,L,f,sh,band){const t=f.time*L.pace,x=u*f.width;
+const center=f.height*.5+sh.slope*(x-f.width/2)+band*.1*Math.sin(Math.PI*2*(.75*u+.1)+L.ph+t*.35);
+const turn=.22+.09*Math.sin(t*.21+L.ph),breathe=.3*Math.sin(t*.5+s*4+L.ph),twist=Math.cos(Math.PI*(u-turn)+s*(.6+breathe)+L.ph);
+return center+s*sh.spread*band*twist}
+function bpPart(x,y,f,str){const p=f.pointer;if(p.amount<.001)return y;const dx=x-p.x,dy=y-p.y,fall=Math.exp(-(dx*dx+dy*dy)/(BP.R*BP.R));
+return y+dy/(Math.abs(dy)+24)*fall*BP.PUSH*str*p.amount}
+function bpDraw(ctx,f,sh){const {width:W,height:H}=f;ctx.clearRect(0,0,W,H);
+const g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,"#ff2e88");g.addColorStop(.5,"#ff4d6d");g.addColorStop(1,"#ff2e88");
+ctx.strokeStyle=g;ctx.lineCap="round";ctx.lineJoin="round";
+const band=Math.min(H,W*1.1),per=Math.max(1,Math.round(sh.count/3)),xs=new Float32Array(BP.SAMPLES+1),ys=new Float32Array(BP.SAMPLES+1);
+BP.LAYERS.forEach((L,li)=>{ctx.lineWidth=L.w;
+for(let i=0;i<per;i++){const dr=f.drawn[li*per+i]??1;if(dr<=0)continue;
+const s=per===1?0:i/(per-1)-.5,last=Math.max(1,Math.ceil(BP.SAMPLES*dr));
+for(let k=0;k<=last;k++){const u=-BP.OVER+k/BP.SAMPLES*(1+BP.OVER*2),x=u*W,y=bpY(s,u,L,f,sh,band);xs[k]=x;ys[k]=sh.interactive?bpPart(x,y,f,L.part):y}
+/* edges fade, the middle carries the weight; a bit stronger than the original so it reads on the dark ticket */
+ctx.globalAlpha=Math.min(1,L.o*1.5*(.45+.55*(1-Math.abs(s)*2)));
+ctx.beginPath();ctx.moveTo(xs[0],ys[0]);
+for(let k=1;k<last;k++)ctx.quadraticCurveTo(xs[k],ys[k],(xs[k]+xs[k+1])/2,(ys[k]+ys[k+1])/2);
+ctx.lineTo(xs[last],ys[last]);ctx.stroke()}});
+ctx.globalAlpha=1}
+let bpRaf=0;
+/* runs until the canvas leaves the page (the recap closes or re-renders) */
+function startPaths(cv,{count=42,spread=1,angle=-8,speed=1,interactive=true}={}){
+cancelAnimationFrame(bpRaf);const ctx=cv.getContext("2d");if(!ctx)return;
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sh={count,spread,slope:Math.tan(angle*Math.PI/180),interactive:interactive&&!reduce};
+const per=Math.max(1,Math.round(count/3)),f={width:0,height:0,time:40,drawn:new Array(per*3).fill(reduce?1:0),pointer:{x:0,y:0,amount:0,on:false}};
+let start=0,last=0;
+/* the recap is scaled to fit the screen, so size by layout px (offsetWidth) and map the mouse back through the scale */
+const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);f.width=cv.offsetWidth;f.height=cv.offsetHeight;
+cv.width=Math.round(f.width*dpr);cv.height=Math.round(f.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);bpDraw(ctx,f,sh)};
+const loop=now=>{if(!cv.isConnected){ro.disconnect();return}
+if(!start){start=now;last=now}const dt=Math.min((now-last)/1000,.05);last=now;f.time+=dt*speed;
+const el=now-start;for(let i=0;i<f.drawn.length;i++)if(f.drawn[i]<1){const t=Math.min(Math.max((el-(i%per)*BP.STAG)/BP.DRAW,0),1);f.drawn[i]=1-(1-t)**3}
+f.pointer.amount+=((f.pointer.on?1:0)-f.pointer.amount)*.08;
+if(!document.hidden)bpDraw(ctx,f,sh);bpRaf=requestAnimationFrame(loop)};
+const ro=new ResizeObserver(resize);ro.observe(cv);resize();cv.style.opacity="1";
+const host=cv.closest(".in")||cv.parentElement; /* the wrapper ignores the mouse, so listen on the ticket section */
+host.addEventListener("pointermove",e=>{if(e.pointerType!=="mouse"||!sh.interactive)return;const r=cv.getBoundingClientRect(),k=f.width/(r.width||1);
+f.pointer.x=(e.clientX-r.left)*k;f.pointer.y=(e.clientY-r.top)*k;f.pointer.on=true});
+host.addEventListener("pointerleave",()=>{f.pointer.on=false});
+if(!reduce)bpRaf=requestAnimationFrame(loop)}
+function animateWaves(){const cv=document.querySelector(".rx-bp");if(cv)startPaths(cv)}
 /* scale the recap down so the whole ticket fits the screen without scrolling */
 function fitRecap(){
 const ov=$("ov"),w=ov.querySelector(".wrap");if(!w||!recap||editing)return;
@@ -676,15 +976,12 @@ const sq=soldQ(l),rev=l.sales.reduce((a,s)=>a+s.qty*s.price,0),cost=sq*l.cost,pr
 const ed=l.eventDate||"",code="TW-"+(l.event.replace(/[^A-Za-z]/g,"").slice(0,4).toUpperCase()||"TIX")+"-"+ed.slice(2,4)+ed.slice(5,7)+"-"+String(parseInt(String(l.id).replace(/\W/g,"").slice(0,3),36)%1000).padStart(3,"0");
 let h=0;for(const c of code)h=(h*31+c.charCodeAt(0))>>>0;let bars="";for(let i=0;i<30;i++){h=(h*1103515245+12345)>>>0;bars+=`<i style="width:${1+(h>>>16)%4}px"></i>`}
 const st=sq===0?"not sold yet":sq===l.qty?"sold out":"partly sold";
-/* faint purple wave lines behind the big number, seeded from the code so each recap is stable */
-let wv="";for(let k=0;k<16;k++){h=(h*1103515245+12345)>>>0;const ph=(h>>>8)%628/100,am=8+(h>>>4)%14,fr=.018+((h>>>12)%10)/1000,spd=(.35+((h>>>6)%60)/100)*(k%2?1:-1);
-wv+=`<path d="${wavePath(ph,am,fr)}" data-w="${ph},${am},${fr},${spd.toFixed(2)}" fill="none" stroke="rgba(255,70,130,${k%3?.28:.42})" stroke-width=".8"/>`}
 return `<div class="rx-bar"><span class="rx-eye">Artist recap</span><button class="btn ghost sm" data-a="cr" type="button">Close</button></div>
-<div class="rx"><div class="in"><div class="rx-top"><span class="rx-pk">Admit one · Recap</span><span class="rx-no">№ ${code}</span></div>
+<div class="rx"><div class="in"><div class="rx-bpw" aria-hidden="true"><canvas class="rx-bp"></canvas></div><div class="rx-top"><span class="rx-pk"><img class="rx-logo" src="icons/mark.png" alt="OOS">Admit one · Recap</span><span class="rx-no">№ ${code}</span></div>
 <div class="rx-av">${esc((l.event.trim()[0]||"?").toUpperCase())}</div><div class="rx-t">${esc(l.event)}</div>
 <div class="rx-d">1 date · ${dmy(ed)}</div>
 <div class="rx-np">Net profit</div>
-<div class="rx-hero"><svg class="rx-wave" viewBox="0 0 400 100" preserveAspectRatio="none" aria-hidden="true">${wv}</svg>
+<div class="rx-hero">
 <div class="rx-bn${pr<0?" neg":""}">${sg}${sp(pr)}<sup>€</sup></div></div>
 <div class="rx-kc">≈ ${sg}${sp(pr*CZK)} Kč</div>
 <div class="rx-two"><div><div class="rx-l">Bought for</div><b>${sp(cost)} €</b><small>≈ ${sp(cost*CZK)} Kč</small></div><div><div class="rx-l">Sold for</div><b>${sp(rev)} €</b><small>≈ ${sp(rev*CZK)} Kč</small></div></div>
@@ -694,7 +991,10 @@ return `<div class="rx-bar"><span class="rx-eye">Artist recap</span><button clas
 <div class="rx-b"><div><span class="rx-pk" style="font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase">Seat · ROI</span><div class="rx-roi${roi<0?" neg":""}">${roi<0?"−":"+"}${Math.round(Math.abs(roi))} %</div><span class="mu">return on investment</span></div>
 <div><div class="rx-bc">${bars}</div><div class="rx-code">${code}</div></div></div></div>
 <div class="rx-iss">Issued ${dmy(today())}</div>`}
-let ltab="all",lsort="date",adding=false,sellRow=null;const selT=new Set();
+let ltab="all",lsort="date",adding=false,sellRow=null;
+const tTr=(l,i)=>{const v=l.ttr&&l.ttr[i];return v==="yes"||v==="pending"||v==="no"?v:(l.transfer||"no")};
+/* group = Transferred when every ticket is, Not transferred when none is, otherwise Pending transfer */
+function groupTr(l){const v=Array.from({length:l.qty},(_,i)=>tTr(l,i));return v.every(x=>x==="yes")?"yes":v.every(x=>x==="no")?"no":"pending"}const selT=new Set();
 /* set ticket rows back to in stock; other tickets of a touched sale keep their rows as 1-ticket sales */
 function unsellRows(lot,rows){const slots=slotSales(lot),hit=new Set(rows.map(i=>slots[i]).filter(Boolean));
 hit.forEach(s=>{const keep=slots.map((x,j)=>x===s&&!rows.includes(j)?j:-1).filter(j=>j>=0);lot.sales=lot.sales.filter(x=>x!==s).concat(keep.map(j=>({id:uid(),date:s.date,qty:1,price:s.price,fee:s.fee||0,seat:j})))})}
@@ -736,6 +1036,7 @@ const pullForm=p=>{p=p||{};return `<div class="sheet"><h3 class="sh-t">${p.id?"E
 <label>Event date<input id="pv" type="date" value="${esc(p.eventDate)}"></label>
 <label>Tickets<input id="pq" type="number" min="1" step="1" value="${p.id?(p.qty||""):2}"></label>
 <label>Profit (€)<input id="pp" type="number" step="0.01" required value="${p.id?p.profit:""}"></label>
+<label>Payout<select id="ppo"><option value="no" ${p.paid?"":"selected"}>Not paid out</option><option value="yes" ${p.paid?"selected":""}>Paid out</option></select></label>
 <label>Status<select id="pt"><option value="no" ${p.transferred?"":"selected"}>Not transferred</option><option value="yes" ${p.transferred?"selected":""}>Transferred</option></select></label>
 <label style="grid-column:1/-1">Notes<textarea id="pn" rows="2">${esc(p.notes)}</textarea></label></div>
 <div class="row"><button class="btn sm" data-a="sp" type="button">${p.id?"Save changes":"Add pulling sale"}</button><button class="btn ghost sm" data-a="cl" type="button">Cancel</button></div></form></div>`};
@@ -820,17 +1121,18 @@ const badge=d===null?"":d===0?`<span class="bdg warn">${IC.warn}Today!</span>`:d
 const chip=l.transfer==="yes"?'<span class="pill ok">Transferred</span>':l.transfer==="pending"?'<span class="pill pend">Pending transfer</span>':"";
 const meta=[clean(l.sector)&&"Sec "+clean(l.sector),clean(l.row)&&"Row "+clean(l.row),l.eventDate?dmy(l.eventDate):"No date"].filter(Boolean).join(" · ");
 const sold=slotSales(l);
+const trSel=i=>{const v=tTr(l,i);return `<select class="ttr ${v}" data-l="${l.id}" data-i="${i}" aria-label="Transfer status of ticket ${i+1}"><option value="yes" ${v==="yes"?"selected":""}>Transferred</option><option value="pending" ${v==="pending"?"selected":""}>Pending transfer</option><option value="no" ${v==="no"?"selected":""}>Not transferred</option></select>`};
 const stSel=(i,s)=>`<select class="tst ${s?"sold":"stock"}" data-l="${l.id}" data-i="${i}"${s?` data-s="${s.id}"`:""} aria-label="Status of ticket ${i+1}"><option value="stock" ${s?"":"selected"}>In stock</option><option value="sold" ${s?"selected":""}>Sold</option></select>`;
 const rows=seatList(l).map((st,i)=>{const s=sold[i];
-if(!s&&sellRow&&sellRow.l===l.id&&sellRow.i===i)return `<tr class="selling"><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td><input type="date" class="r-d" value="${td}" aria-label="Sold on"></td><td><input type="number" class="r-p" min="0" step="0.01" placeholder="€" aria-label="Sold for (€)"></td><td class="mu">—</td><td class="mu">—</td><td><span class="stp sold">Sold</span></td><td><button class="ib ok" data-a="rs" data-l="${l.id}" data-i="${i}" type="button" title="Save sale" aria-label="Save sale">${IC.check}</button><button class="ib" data-a="rx" type="button" title="Cancel" aria-label="Cancel">${IC.x}</button></td></tr>`;
-if(!s)return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td>${stSel(i,null)}</td><td></td></tr>`;
+if(!s&&sellRow&&sellRow.l===l.id&&sellRow.i===i)return `<tr class="selling"><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td><input type="date" class="r-d" value="${td}" aria-label="Sold on"></td><td><input type="number" class="r-p" min="0" step="0.01" placeholder="€" aria-label="Sold for (€)"></td><td class="mu">—</td><td class="mu">—</td><td><span class="stp sold">Sold</span></td><td>${trSel(i)}</td><td><button class="ib ok" data-a="rs" data-l="${l.id}" data-i="${i}" type="button" title="Save sale" aria-label="Save sale">${IC.check}</button><button class="ib" data-a="rx" type="button" title="Cancel" aria-label="Cancel">${IC.x}</button></td></tr>`;
+if(!s)return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td class="mu">—</td><td>${stSel(i,null)}</td><td>${trSel(i)}</td><td></td></tr>`;
 const p=s.price-l.cost,r=l.cost?p/l.cost*100:0;
-return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td>${dmy(s.date)}</td><td>${eur(s.price)}</td><td class="${p>=0?"pos":"neg"}">${eur(p)}</td><td class="${r>=0?"pos":"neg"}">${l.cost?(r<0?"−":"")+Math.abs(r).toFixed(0)+"%":"—"}</td><td>${stSel(i,s)}</td><td><button class="ib del" data-a="ds" data-l="${l.id}" data-s="${s.id}" type="button" title="Delete this sale (${s.qty} ticket${s.qty===1?"":"s"})" aria-label="Delete this sale">${IC.trash}</button></td></tr>`}).join("");
+return `<tr><td class="ck"><input type="checkbox" class="rck" data-l="${l.id}" data-i="${i}" ${selT.has(l.id+":"+i)?"checked":""} aria-label="Select ticket ${i+1}"></td><td class="mono">${esc(st)}</td><td>${eur(l.cost)}</td><td>${dmy(s.date)}</td><td>${eur(s.price)}</td><td class="${p>=0?"pos":"neg"}">${eur(p)}</td><td class="${r>=0?"pos":"neg"}">${l.cost?(r<0?"−":"")+Math.abs(r).toFixed(0)+"%":"—"}</td><td>${stSel(i,s)}</td><td>${trSel(i)}</td><td><button class="ib del" data-a="ds" data-l="${l.id}" data-s="${s.id}" type="button" title="Delete this sale (${s.qty} ticket${s.qty===1?"":"s"})" aria-label="Delete this sale">${IC.trash}</button></td></tr>`}).join("");
 return `<details class="lot" data-l="${l.id}" ${openIds.has(l.id)?"open":""}><summary><input type="checkbox" class="gck" data-l="${l.id}" ${l.qty&&Array.from({length:l.qty},(_,i)=>selT.has(l.id+":"+i)).every(Boolean)?"checked":""} aria-label="Select all tickets of ${esc(l.event)}">${IC.chev}<div class="lt"><div class="lt-n"><b>${esc(l.event)}</b>${badge}${chip}</div><span>${esc(meta)}</span>${l.notes?`<span class="lt-d" title="${esc(l.notes)}">${esc(l.notes)}</span>`:""}</div>
-<div class="lr"><div class="li"><b>${eur(inv(l))}</b><span>Invested</span></div><span class="tk">${l.qty} ticket${l.qty===1?"":"s"}</span></div></summary>
-<div class="lb"><div class="tw"><table class="tt"><thead><tr><th class="ck"></th><th>Seat</th><th>Paid</th><th>Sold on</th><th>Revenue</th><th>Profit</th><th>ROI</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>
+<div class="lr">${(()=>{const c=sq*l.cost,pr=lotProfit(l);if(!sq)return "";const r=c?pr/c*100:null;return `<div class="li"><b class="${pr>=0?"pos":"neg"}">${eur(pr)}</b><span>Profit</span></div>`+(r===null?"":`<div class="li"><b class="${r>=0?"pos":"neg"}">${r<0?"−":""}${Math.abs(r).toFixed(0)}%</b><span>ROI</span></div>`)})()}<div class="li"><b>${eur(inv(l))}</b><span>Invested</span></div><span class="tk">${l.qty} ticket${l.qty===1?"":"s"}</span></div></summary>
+<div class="lb"><div class="tw"><table class="tt"><thead><tr><th class="ck"></th><th>Seat</th><th>Paid</th><th>Sold on</th><th>Revenue</th><th>Profit</th><th>ROI</th><th>Status</th><th>Transfer</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>
 ${l.notes?`<p class="lnote"><span class="lbl">Description</span>${esc(l.notes)}</p>`:""}
-<div class="lf">${rem>0?`<div class="sf" data-l="${l.id}"><label>Sale date<input type="date" class="a-d" value="${td}"></label><label>Qty (${rem} left)<input type="number" class="a-q" min="1" max="${rem}" value="${rem}"></label><label>Sell each (€)<input type="number" class="a-p" min="0" step="0.01"></label><button class="btn sm" data-a="as" data-l="${l.id}" type="button">Add sale</button></div>`:'<span class="mu" style="font-size:13px">All tickets sold.</span>'}
+<div class="lf">${rem>0?`<div class="sf" data-l="${l.id}"><label>Sale date<input type="date" class="a-d" value="${td}"></label><label>Qty (${rem} left)<input type="number" class="a-q" min="1" max="${rem}" value="${rem}"></label><label>Sell each (€)<input type="number" class="a-p" min="0" step="0.01"></label><button class="btn sm" data-a="as" data-l="${l.id}" type="button">Add sale</button></div>`:'<span class="mu" style="font-size:13px">All tickets sold</span>'}
 <div class="la"><select class="trs" data-l="${l.id}" aria-label="Transfer status">${["no","pending","yes"].map(k=>`<option value="${k}" ${l.transfer===k?"selected":""}>${TR[k]}</option>`).join("")}</select>
 <button class="ib" data-a="rc" data-l="${l.id}" type="button" title="View recap" aria-label="View recap">${IC.recap}</button><button class="ib" data-a="el" data-l="${l.id}" type="button" title="Edit details" aria-label="Edit details">${IC.pen}</button><button class="ib del" data-a="dl" data-l="${l.id}" type="button" title="Delete these tickets" aria-label="Delete these tickets">${IC.trash}</button></div></div></div></details>`}).join("")
 :'<div class="panel empty">No tickets here. Use Add New to add a group of tickets.</div>';
@@ -848,10 +1150,11 @@ $("pkpis").innerHTML=pc("Total profit",money(tot),(all.length-pend.length)+" tra
 const ps=all.filter(p=>(!pf||[p.client,p.event,p.notes].join(" ").toLowerCase().includes(pf))&&(pst==="all"||(pst==="yes")===!!p.transferred)&&(mo.value==="all"||(p.date||"").startsWith(mo.value))).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
 [...selP].forEach(id=>{if(!all.some(p=>p.id===id))selP.delete(id)});
 const allOn=ps.length&&ps.every(p=>selP.has(p.id));
-$("pulls").innerHTML=ps.length?`<table class="ptt"><thead><tr><th class="ck"><input type="checkbox" class="pck-all" ${allOn?"checked":""} aria-label="Select all shown"></th><th>Date</th><th>Client</th><th>Items</th><th>Notes</th><th class="r">Profit</th><th class="c">Status</th><th class="c">Actions</th></tr></thead><tbody>`+ps.map(p=>{const pr=+p.profit||0,sub=[p.qty?p.qty+" ticket"+(p.qty===1?"":"s"):"",p.eventDate?"Event "+dmy(p.eventDate):""].filter(Boolean).join(" · ");
+$("pulls").innerHTML=ps.length?`<table class="ptt"><thead><tr><th class="ck"><input type="checkbox" class="pck-all" ${allOn?"checked":""} aria-label="Select all shown"></th><th>Date</th><th>Client</th><th>Items</th><th>Notes</th><th class="r">Profit</th><th class="c">Status</th><th class="c">Payout</th><th class="c">Actions</th></tr></thead><tbody>`+ps.map(p=>{const pr=+p.profit||0,sub=[p.qty?p.qty+" ticket"+(p.qty===1?"":"s"):"",p.eventDate?"Event "+dmy(p.eventDate):""].filter(Boolean).join(" · ");
 return `<tr><td class="ck"><input type="checkbox" class="pck" data-p="${p.id}" ${selP.has(p.id)?"checked":""} aria-label="Select this sale"></td><td class="nw">${p.date?dmy(p.date):"—"}</td><td><b class="pcl">${esc(p.client)||'<span class="mu">—</span>'}</b></td>
 <td class="pit"><b>${esc(p.event)}</b>${sub?`<span>${sub}</span>`:""}</td><td class="pno">${p.notes?esc(p.notes):`<span class="mu">—</span>`}</td><td class="r ${pr>=0?"pos":"neg"}">${money(pr)}</td>
 <td class="c"><select class="pst ${p.transferred?"sold":"stock"}" data-p="${p.id}" aria-label="Transfer status"><option value="yes" ${p.transferred?"selected":""}>Transferred</option><option value="no" ${p.transferred?"":"selected"}>Not transferred</option></select></td>
+<td class="c"><select class="ppo ${p.paid?"yes":"no"}" data-p="${p.id}" aria-label="Payout"><option value="yes" ${p.paid?"selected":""}>Paid out</option><option value="no" ${p.paid?"":"selected"}>Not paid out</option></select></td>
 <td class="c nw"><button class="ib" data-a="ep" data-p="${p.id}" type="button" title="Edit" aria-label="Edit">${IC.pen}</button><button class="ib del" data-a="dp" data-p="${p.id}" type="button" title="Delete" aria-label="Delete">${IC.trash}</button></td></tr>`}).join("")+"</tbody></table>"
 :`<div class="empty">${all.length?"No pulling sales match.":"No pulling sales yet. Use Add New to log one."}</div>`;
 $("pbulk").hidden=!selP.size;$("pbn").textContent=selP.size+" sale"+(selP.size===1?"":"s")+" selected";}
@@ -860,15 +1163,28 @@ const om=adding?"add":reviewing?"review":kwEdit?"kw":pulling?"pull-"+(pulling.id
 }
 
 window.addEventListener("error",e=>stat("Error: "+e.message,1));
+const markCur=()=>$("cur").querySelectorAll("[data-c]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.c===CUR)));markCur();
+$("cur").onclick=e=>{const b=e.target.closest("[data-c]");if(!b||b.dataset.c===CUR)return;CUR=b.dataset.c;try{localStorage.setItem("tt-cur",CUR)}catch(x){}markCur();render()};
+/* keep several open tabs on the same data: another tab saved → take its copy (unless this one has unsaved edits open) */
+addEventListener("storage",e=>{
+if(e.key==="tt-cur"){CUR=e.newValue==="CZK"?"CZK":"EUR";markCur();render();return}
+if(e.key!==KEY||!e.newValue)return;
+try{const d=JSON.parse(e.newValue);if(!d||!Array.isArray(d.lots))return;S=mk(d);norm();
+const m=JSON.parse(localStorage.getItem(META)||"null");if(m){rev=+m.rev||0;pending=!!m.pending}render()}catch(x){}});
 /* ---- profit chart (top card) ---- */
 /* metric card: plain-JS port of Kokonut UI's metric-card (MIT, @dorianbaffier, kokonutui.com).
    Lines are the running total inside the period (sales are sparse); a read shows the real profit of a day or a range. */
-const C={t:"#ff2e88",p:"#ececef",a:"#4d8dff"},SEGS=[{name:"Tickets",color:C.t},{name:"Pulling",color:C.p}],PERS=[7,30,90];
+const C={t:"#ff2e88",p:"#ececef",a:"#c08cff"},SEGS=[{name:"Tickets",color:C.t},{name:"Pulling",color:C.p}],PERS=[7,30,90,0];
 const MW=400,MH=120,MPY=10,SAMPLES=90,MORPH=420;
 let per=30,focus=null,cursor=null,range=null,drag=null,MC=null,shown=null,mraf=0;
-try{const v=+localStorage.getItem("tt-per");if(PERS.includes(v))per=v}catch(x){}
+/* which graph: profit or revenue (tickets sold at their price + pulling, like the Revenue card) */
+let met="profit";try{if(localStorage.getItem("tt-met")==="revenue")met="revenue"}catch(x){}
+try{const raw=localStorage.getItem("tt-per");if(raw!==null&&PERS.includes(+raw))per=+raw}catch(x){}
+/* period 0 = all time: from the first sale or pulling sale until today */
+const allDays=()=>{let m="";S.lots.forEach(l=>l.sales.forEach(s=>{if(s.date&&(!m||s.date<m))m=s.date}));S.pulls.forEach(p=>{if(p.date&&(!m||p.date<m))m=p.date});if(!m)return 30;return Math.max(7,Math.min(3650,Math.round((new Date(today()+"T00:00:00")-new Date(m+"T00:00:00"))/864e5)+1))};
+const pDays=()=>per||allDays();
 const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-const kmoney=n=>(Math.round(n)<0?"−":"")+"€"+Math.round(Math.abs(n)).toLocaleString("en-US");
+const kmoney=n=>CUR==="CZK"?czk(n):(Math.round(n)<0?"−":"")+"€"+Math.round(Math.abs(n)).toLocaleString("en-US");
 const sumA=a=>a.reduce((s,v)=>s+v,0),clampN=(v,a,b)=>Math.min(b,Math.max(a,v));
 const fDay=k=>new Date(k+"T00:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
 const fShort=k=>new Date(k+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});
@@ -891,11 +1207,11 @@ function resample(v,n){if(!v.length)return new Array(n).fill(0);const o=[];for(l
 /* daily profit, oldest first, ending today: parts = [tickets, pulling] */
 function daily(n){const t=new Date(),keys=[];for(let i=n-1;i>=0;i--)keys.push(ymd(new Date(t.getFullYear(),t.getMonth(),t.getDate()-i)));
 const ix=new Map(keys.map((k,i)=>[k,i])),out=keys.map(date=>({date,parts:[0,0]}));
-S.lots.forEach(l=>l.sales.forEach(s=>{const i=ix.get(s.date);if(i!==undefined)out[i].parts[0]+=s.qty*(s.price-l.cost)}));
+S.lots.forEach(l=>l.sales.forEach(s=>{const i=ix.get(s.date);if(i!==undefined)out[i].parts[0]+=s.qty*(met==="revenue"?s.price:s.price-l.cost)}));
 S.pulls.forEach(p=>{const i=p.date?ix.get(p.date):undefined;if(i!==undefined)out[i].parts[1]+=p.profit});
 return out}
 function mBuild(){
-const data=daily(per*2),cur=data.slice(per),prev=data.slice(0,per);
+const n=pDays(),data=daily(n*2),cur=data.slice(n),prev=data.slice(0,n);
 const pick=d=>focus===null?d.parts[0]+d.parts[1]:d.parts[focus];
 const now=cur.map(pick),before=prev.map(pick),run=a=>{let s=0;return a.map(v=>s+=v)};
 const cn=run(now),cb=run(before),all=cn.concat(cb,0);
@@ -930,12 +1246,13 @@ if(range&&range.a!==range.b){span={lo:Math.min(range.a,range.b),hi:Math.max(rang
 else if(cursor!==null&&cursor<=last)span={lo:cursor,hi:cursor};
 const tot=a=>sumA(span?a.slice(span.lo,span.hi+1):a),value=tot(MC.now),cmp=tot(MC.before);
 const day=span&&!ranged?MC.cur[span.lo]:null;
-let cap=`vs previous ${per} days`;
-if(ranged)cap=`${fShort(MC.cur[span.lo].date)} – ${fShort(MC.cur[span.hi].date)} vs prior ${span.hi-span.lo+1} days`;
-else if(day)cap=`${fDay(day.date)} vs ${fShort(MC.prev[span.lo].date)}`;
+let cap=per?`vs previous ${per} days`:`All time · since ${fShort(MC.cur[0].date)}`;
+if(ranged)cap=`${fShort(MC.cur[span.lo].date)} – ${fShort(MC.cur[span.hi].date)} `+(per?` vs prior ${span.hi-span.lo+1} days`:"");
+else if(day)cap=fDay(day.date)+(per?` vs ${fShort(MC.prev[span.lo].date)}`:"");
 const txt=kmoney(value);roll($("mcv"),txt);$("mcsr").textContent=txt;$("mcvw").classList.toggle("neg",Math.round(value)<0);
 const dl=$("mcd");
-if(Math.abs(cmp)<.005){const z=Math.abs(value)<.005;dl.className=z?"eq":value>0?"up":"dn";dl.textContent=z?"– 0.0%":(value>0?"▲":"▼")+" new"}
+if(!per){dl.className="eq";dl.textContent=""}
+else if(Math.abs(cmp)<.005){const z=Math.abs(value)<.005;dl.className=z?"eq":value>0?"up":"dn";dl.textContent=z?"– 0.0%":(value>0?"▲":"▼")+" new"}
 else{const d=(value-cmp)/Math.abs(cmp);dl.className=d>=0?"up":"dn";dl.textContent=(d>=0?"▲ ":"▼ ")+Math.abs(d*100).toFixed(1)+"%"}
 $("mccap").textContent=cap;$("mcclr").hidden=!ranged;
 const ch=$("mcch");ch.setAttribute("aria-valuenow",String(span?span.hi+1:last+1));
@@ -953,14 +1270,14 @@ $("mcbar").querySelectorAll("i").forEach(b=>b.style.flexGrow=Math.max(0,parts[+b
 $("mcli").querySelectorAll("[data-i]").forEach(b=>{const v=parts[+b.dataset.i],vl=b.querySelector(".vl");vl.textContent=kmoney(v);vl.className="vl"+(Math.round(v)<0?" neg":"");b.querySelector(".sh").textContent=(ab?Math.abs(v)/ab*100:0).toFixed(0)+"%"})}
 function renderChart(){
 MC=mBuild();cursor=range=drag=null;
-$("dash").style.setProperty("--mcc",focus===null?C.a:SEGS[focus].color);
-$("mcl").innerHTML="Profit"+(focus===null?"":` <b>· ${SEGS[focus].name}</b>`);
+$("dash").style.setProperty("--mcc",focus===null?C.a:SEGS[focus].color);$("dash").classList.toggle("neon",focus===null);$("dash").classList.toggle("allt",!per);
+$("mcl").innerHTML=focus===null?"":`· <b>${SEGS[focus].name}</b>`;$("mcm").querySelectorAll("[data-m]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===met)));
 $("mcper").querySelector(".mc-pill").style.transform=`translateX(${Math.max(0,PERS.indexOf(per))*100}%)`;
 $("mcper").querySelectorAll("[data-p]").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.p===per)));
 $("mcbar").querySelectorAll("i").forEach(b=>b.classList.toggle("dim",focus!==null&&focus!==+b.dataset.i));
 $("mcli").querySelectorAll("[data-i]").forEach(b=>{const i=+b.dataset.i;b.setAttribute("aria-pressed",String(focus===i));b.classList.toggle("dim",focus!==null&&focus!==i);b.setAttribute("aria-label",focus===i?"Show all profit":"Show only "+SEGS[i].name)});
 $("mcf").textContent=fShort(MC.cur[0].date);$("mct").textContent=fShort(MC.cur[MC.cur.length-1].date);
-$("mcch").setAttribute("aria-label",`Profit over the last ${per} days. Arrow keys read each day; hold Shift to select a range.`);$("mcch").setAttribute("aria-valuemax",String(per));
+$("mcch").setAttribute("aria-label",`${met==="revenue"?"Revenue":"Profit"} ${per?`over the last ${per} days`:"for all time"}. Arrow keys read each day; hold Shift to select a range.`);$("mcch").setAttribute("aria-valuemax",String(MC.cur.length));
 mMorph();mRead()}
 {const ch=$("mcch"),last=()=>MC.cur.length-1;
 const at=x=>{const r=ch.getBoundingClientRect();return Math.round(clampN((x-r.left)/(r.width||1),0,1)*last())};
@@ -976,6 +1293,7 @@ const mv={ArrowLeft:-1,ArrowRight:1,Home:-1e4,End:1e4}[e.key];if(mv===undefined)
 const from=range?range.b:cursor===null?last():cursor,to=clampN(from+mv,0,last());
 range=e.shiftKey?{a:range?range.a:from,b:to}:null;cursor=to;mRead()});
 $("mcclr").onclick=()=>{range=cursor=null;mRead()};
+$("mcm").onclick=e=>{const b=e.target.closest("[data-m]");if(!b||b.dataset.m===met)return;met=b.dataset.m;try{localStorage.setItem("tt-met",met)}catch(x){}renderChart()};
 $("mcper").onclick=e=>{const b=e.target.closest("[data-p]");if(!b)return;per=+b.dataset.p;try{localStorage.setItem("tt-per",String(per))}catch(x){}renderChart()};
 $("mcli").onclick=e=>{const b=e.target.closest("[data-i]");if(!b)return;const i=+b.dataset.i;focus=focus===i?null:i;renderChart()}}
 function renderKpis(){
@@ -984,34 +1302,46 @@ let rev=0,cogs=0,tp=0,sold=0,left=0,tied=0,sales=0;
 S.lots.forEach(l=>{tp+=lotProfit(l);const q=soldQ(l);sold+=q;left+=l.qty-q;tied+=(l.qty-q)*l.cost;cogs+=q*l.cost;l.sales.forEach(s=>{rev+=s.qty*s.price;sales++})});
 const pp=S.pulls.reduce((a,p)=>a+p.profit,0),roi=cogs?tp/cogs*100:0,pf=tp+pp;
 $("kpis").innerHTML=[
-["Revenue",money(rev),`${sales} sale${sales===1?"":"s"} · ${kmoney(tied)} unsold at cost`,"#ececef",""],
-["Profit",money(pf),`<b style="color:${C.t}">${kmoney(tp)}</b> tickets · <b>${kmoney(pp)}</b> pulling`,C.t,pf<0?"neg":"acc"],
-["Confirmed ROI",(cogs?(roi<0?"−":"")+Math.abs(roi).toFixed(1):"0.0")+"%","Profit on sold tickets vs their cost","#34d27b",roi<0?"neg":""],
+["Revenue",money(rev+pp),"","#ececef",""],
+["Profit",money(pf),"",C.t,pf<0?"neg":"acc"],
+["Confirmed ROI",(cogs?(roi<0?"−":"")+Math.abs(roi).toFixed(1):"0.0")+"%","","#34d27b",roi<0?"neg":""],
 ["Tickets",String(sold+left),`<b style="color:var(--pos)">${sold} sold</b> · ${left} unsold`,"#8b7bff",""]]
-.map(([a,b,c,col,cls])=>`<div class="card acc" style="--c:${col}"><div class="lbl">${a}</div><div class="num ${cls}">${b}</div><div class="trend">${c}</div></div>`).join("");
+.map(([a,b,c,col,cls])=>`<div class="card acc" style="--c:${col}"><div class="lbl">${a}</div><div class="num ${cls}">${b}</div>${c?`<div class="trend">${c}</div>`:""}</div>`).join("");
+{const tc=$("kpis").children[3];if(tc){tc.classList.add("obj");tc.insertAdjacentHTML("beforeend",'<div class="k-obj" aria-hidden="true"><div class="k-stub b"></div><div class="k-stub f"><i class="k-bc"></i><img src="icons/mark.png" alt=""></div></div>')}
+const nd=new Date();$("ptitle").innerHTML=nd.toLocaleDateString("en-US",{month:"long"})+" <span>"+nd.getFullYear()+"</span>";
+$("nn-t").textContent=S.lots.length;$("nn-p").textContent=S.pulls.length;const tc2=k=>S.lots.filter(l=>(l.transfer||"no")===k).length;$("nn-y").textContent=tc2("yes");$("nn-q").textContent=tc2("pending");$("nn-n").textContent=tc2("no")}
 /* tickets page cards */
-const invest=S.lots.reduce((a,l)=>a+l.qty*l.cost,0),tcard=(a,b,c,cls)=>'<div class="card"><div class="lbl">'+a+'</div><div class="num '+cls+'">'+b+'</div><div class="trend">'+c+'</div></div>';
-$("tkpis").innerHTML=tcard("Ticket revenue",money(rev),"All time","")+tcard("Ticket profit",money(tp),"All time",tp<0?"neg":"acc")+tcard("In stock",String(left),kmoney(tied)+" at cost","")+tcard("Investment",money(invest),S.lots.length+" ticket group"+(S.lots.length===1?"":"s"),"");
+const invest=S.lots.reduce((a,l)=>a+l.qty*l.cost,0),tcard=(a,b,c,cls)=>'<div class="card"><div class="lbl">'+a+'</div><div class="num '+cls+'">'+b+'</div>'+(c?'<div class="trend">'+c+'</div>':"")+'</div>';
+$("tkpis").innerHTML=tcard("Ticket revenue",eur(rev),"","")+tcard("Ticket profit",eur(tp),"",tp<0?"neg":"acc")+tcard("In stock",String(left),kmoney(tied)+" at cost","")+tcard("Investment",eur(invest),S.lots.length+" ticket group"+(S.lots.length===1?"":"s"),"");
 /* upcoming events: groups whose event is today or later, soonest first */
 const td=today(),DAY=864e5,up=S.lots.filter(l=>l.eventDate&&l.eventDate>=td).sort((x,y)=>x.eventDate.localeCompare(y.eventDate));
 $("evc").textContent=up.length;
 $("evl").innerHTML=up.length?up.map(l=>{const un=l.qty-soldQ(l),d=Math.round((new Date(l.eventDate+"T00:00:00")-new Date(td+"T00:00:00"))/DAY);
-return `<li><div class="ev-m"><b>${esc(l.event)}</b><span>${dmy(l.eventDate)}</span></div><div class="ev-r">${l.qty} ticket${l.qty===1?"":"s"} · ${un?`<span class="un">${un} unsold</span>`:"all sold"} · <span class="dd${d<=7?" soon":""}">${d?"D-"+d:"Today"}</span></div></li>`}).join("")
+return `<li><div class="ev-m"><b>${esc(l.event)}</b><span>${dmy(l.eventDate)}</span></div><div class="ev-r">${l.qty} ticket${l.qty===1?"":"s"} · ${un?`<span class="un">${un} unsold</span>`:"all sold"} · <span class="dd${d<=7?" soon":""}">${d?"D-"+d:"Today"}</span></div><span class="pill ev-t ${l.transfer==="yes"?"ok":l.transfer==="pending"?"pend":"no"}">${{yes:"Transferred",pending:"Pending",no:"Not transferred"}[l.transfer]||"Not transferred"}</span></li>`}).join("")
 :'<li class="empty">No upcoming events.</li>';
 $("nvc").textContent=S.lots.length+" ticket group"+(S.lots.length===1?"":"s");$("nvs").textContent=sold+" sold · "+left+" unsold";$("nvb").style.width=(sold+left?sold/(sold+left)*100:0)+"%"}
 /* ---- side menu ---- */
 const navEl=$("nav"),root=document.documentElement;
-const setNav=o=>{root.classList.toggle("nav-open",o);navEl.inert=!o;$("hb").setAttribute("aria-expanded",String(o));
+const deskMQ=matchMedia("(min-width:1024px)");
+const setNav=o=>{root.classList.toggle("nav-open",o&&!deskMQ.matches);navEl.inert=!o&&!deskMQ.matches;$("hb").setAttribute("aria-expanded",String(o));
 if(o)navEl.focus({preventScroll:true});else if(navEl.contains(document.activeElement))$("hb").focus({preventScroll:true})};
-$("hb").onclick=()=>setNav(true);$("scrim").onclick=()=>setNav(false);
+$("hb").onclick=()=>{if(deskMQ.matches)setSide(true);else setNav(true)};$("scrim").onclick=()=>setNav(false);
 addEventListener("keydown",e=>{if(e.key==="Escape"&&root.classList.contains("nav-open"))setNav(false)});
 let tx=0;navEl.addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
 navEl.addEventListener("touchend",e=>{if(e.changedTouches[0].clientX-tx<-60)setNav(false)});
 /* ---- pages: one view at a time, address #tickets etc. so the back gesture works ---- */
 const NAVT={dash:"Dashboard",tickets:"Tickets",pulling:"Pulling",data:"Data & export",sync:"Sync"};
 let view="dash";
-const markNav=k=>{navEl.querySelectorAll("[data-nav]").forEach(b=>b.setAttribute("aria-current",String(b.dataset.nav===k)));$("tbt").textContent=NAVT[k]};
-function showView(v){if(!NAVT[v])v="dash";view=v;
+const markNav=k=>{navEl.querySelectorAll("[data-nav]").forEach(b=>b.setAttribute("aria-current",String(b.dataset.nav===k)));$("tbt").textContent=NAVT[k];const ic=navEl.querySelector(`[data-nav="${k}"] svg`);$("tbic").innerHTML=ic?ic.outerHTML:""};
+/* desktop sidebar can be closed; the choice is remembered on this device */
+const setSide=open=>{root.classList.toggle("side-closed",!open);try{localStorage.setItem("tt-side",open?"open":"closed")}catch(x){}syncNavInert();$("hb").setAttribute("aria-label",open?"Open menu":"Open sidebar");if(!open)$("hb").focus({preventScroll:true})};
+try{if(localStorage.getItem("tt-side")==="closed")root.classList.add("side-closed")}catch(x){}
+$("nvx").onclick=()=>{if(deskMQ.matches)setSide(false);else setNav(false)};
+const syncNavInert=()=>{if(deskMQ.matches){navEl.inert=root.classList.contains("side-closed");root.classList.remove("nav-open")}else if(!root.classList.contains("nav-open"))navEl.inert=true};syncNavInert();deskMQ.addEventListener("change",syncNavInert);
+/* sidebar search: types into the Tickets search and jumps there; Ctrl/Cmd+K focuses it */
+$("gs").addEventListener("input",e=>{$("fl").value=e.target.value;if(view!=="tickets"){history.pushState(null,"","#tickets");showView("tickets")}render()});
+addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();if(!deskMQ.matches)setNav(true);else if(root.classList.contains("side-closed"))setSide(true);$("gs").focus();$("gs").select()}});
+function showView(v){if(!NAVT[v])v="dash";view=v;document.body.dataset.view=v;
 document.querySelectorAll(".view").forEach(s=>s.hidden=s.dataset.view!==v);markNav(v);scrollTo(0,0);
 if(v==="dash")renderChart()}
 const fromHash=()=>location.hash.slice(1)||"dash";
@@ -1027,7 +1357,11 @@ else{const k=l.id+":"+r.dataset.i;r.checked?selT.add(k):selT.delete(k);render()}
 $("lots").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest(".selling")){e.preventDefault();e.target.closest("tr").querySelector('[data-a="rs"]').click()}else if(e.key==="Escape"&&sellRow){sellRow=null;render()}});
 $("ftab").onclick=e=>{const b=e.target.closest("[data-f]");if(b){ltab=b.dataset.f;render()}};
 $("fsort").onclick=e=>{const b=e.target.closest("[data-s]");if(b){lsort=b.dataset.s;render()}};
-document.addEventListener("change",e=>{const ps=e.target.closest(".pst");if(ps&&ps.dataset.p){const p=S.pulls.find(x=>x.id===ps.dataset.p);if(p){p.transferred=ps.value==="yes";persist();render()}return}
+document.addEventListener("change",e=>{if(e.target.id==="bktr"){const v=e.target.value;if(!v)return;const by={};selT.forEach(k=>{const[id,i]=k.split(":");(by[id]=by[id]||[]).push(+i)});let n=0;
+Object.entries(by).forEach(([id,rows])=>{const l=S.lots.find(x=>x.id===id);if(!l)return;l.ttr=Array.from({length:l.qty},(_,k)=>tTr(l,k));rows.forEach(i=>{if(i<l.qty){l.ttr[i]=v;n++}});l.transfer=groupTr(l);if(l.ttr.every(x=>x===l.transfer))delete l.ttr;openIds.add(id)});
+selT.clear();e.target.value="";persist();render();note(n+" ticket"+(n===1?"":"s")+" set to "+TR[v].toLowerCase()+".");return}
+const po=e.target.closest(".ppo");if(po&&po.dataset.p){const p=S.pulls.find(x=>x.id===po.dataset.p);if(p){p.paid=po.value==="yes";persist();render()}return}
+const ps=e.target.closest(".pst");if(ps&&ps.dataset.p){const p=S.pulls.find(x=>x.id===ps.dataset.p);if(p){p.transferred=ps.value==="yes";persist();render()}return}
 const rt=e.target.closest(".rv-t");if(rt){rt.closest(".rv").dataset.t=rt.value;return}
 const t=e.target.closest(".tst");if(t){const lot=S.lots.find(l=>l.id===t.dataset.l),i=+t.dataset.i;if(!lot)return;openIds.add(lot.id);
 if(t.value==="sold"){sellRow={l:lot.id,i};render();setTimeout(()=>{const p=document.querySelector(".selling .r-p");if(p)p.focus()},30);return}
@@ -1035,7 +1369,8 @@ const s=lot.sales.find(x=>x.id===t.dataset.s);if(!s)return;
 /* back to in stock: drop just this ticket; the other tickets of that sale keep their rows */
 unsellRows(lot,[i]);
 persist();render();return}
-const s=e.target.closest(".trs");if(!s)return;const lot=S.lots.find(l=>l.id===s.dataset.l);if(lot){lot.transfer=s.value;openIds.add(lot.id);persist();render()}});
+const tt=e.target.closest(".ttr");if(tt){const lot=S.lots.find(l=>l.id===tt.dataset.l),i=+tt.dataset.i;if(!lot)return;lot.ttr=Array.from({length:lot.qty},(_,k)=>tTr(lot,k));lot.ttr[i]=tt.value;lot.transfer=groupTr(lot);if(lot.ttr.every(x=>x===lot.transfer))delete lot.ttr;openIds.add(lot.id);persist();render();return}
+const s=e.target.closest(".trs");if(!s)return;const lot=S.lots.find(l=>l.id===s.dataset.l);if(lot){lot.transfer=s.value;delete lot.ttr;openIds.add(lot.id);persist();render()}});
 $("lots").addEventListener("toggle",e=>{const id=e.target.dataset.l;if(id)e.target.open?openIds.add(id):openIds.delete(id)},true);
 
 $("pfl").oninput=$("pst").onchange=$("pmo").onchange=render;
@@ -1087,11 +1422,12 @@ else if(a==="dp"){const p=S.pulls.find(x=>x.id===b.dataset.p);if(p&&confirm("Del
 else if(a==="np"){pulling={id:null};render();setTimeout(()=>{const i=document.getElementById("pc");if(i)i.focus()},30)}
 else if(a==="ep"){pulling={id:b.dataset.p};render()}
 else if(a==="sp"){const f=document.getElementById("pf");if(!f.reportValidity())return;
-const v={date:$("pd").value,client:$("pc").value.trim(),event:$("pe").value.trim(),eventDate:$("pv").value,qty:+$("pq").value||0,profit:+$("pp").value,transferred:$("pt").value==="yes",notes:$("pn").value.trim()};
+const v={date:$("pd").value,client:$("pc").value.trim(),event:$("pe").value.trim(),eventDate:$("pv").value,qty:+$("pq").value||0,profit:+$("pp").value,transferred:$("pt").value==="yes",paid:$("ppo").value==="yes",notes:$("pn").value.trim()};
 const old=pulling.id&&S.pulls.find(p=>p.id===pulling.id);if(old)Object.assign(old,v);else S.pulls.push(Object.assign({id:uid(),sector:"",row:"",seats:""},v));
 pulling=null;persist();render();note(old?"Changes saved.":"Pulling sale added.")}
 else if(a==="pbt"||a==="pbu"){const t=a==="pbt";S.pulls.forEach(p=>{if(selP.has(p.id))p.transferred=t});const n=selP.size;selP.clear();persist();render();note(n+" sale"+(n===1?"":"s")+" marked "+(t?"transferred.":"not transferred."))}
-else if(a==="pbc"){selP.clear();render()}});
+else if(a==="pbc"){selP.clear();render()}
+else if(a==="pbp"||a==="pbq"){const t=a==="pbp";S.pulls.forEach(p=>{if(selP.has(p.id))p.paid=t});const n=selP.size;selP.clear();persist();render();note(n+" sale"+(n===1?"":"s")+" marked "+(t?"paid out.":"not paid out."))}});
 
 /* ---- CSV ---- */
 const q2=v=>{v=String(v==null?"":v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};

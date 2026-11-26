@@ -29,3 +29,16 @@ foreach ($o in @(@{n = "icon-512.png"; s = 512 }, @{n = "icon-192.png"; s = 192 
   "wrote icons\" + $o.n
 }
 $src.Dispose()
+
+# Small round mark for the top bar and the recap ticket: the "Ō" from icons/mark-source.jpg (1024x1024,
+# symbol centred around 515,512), cropped to a square with some air around it, 256 px.
+$ms = [System.Drawing.Image]::FromFile((Join-Path $root "icons\mark-source.jpg"))
+$mside = 780; $mr = New-Object System.Drawing.Rectangle ([int](515 - $mside / 2)), ([int](512 - $mside / 2)), $mside, $mside
+$mb = New-Object System.Drawing.Bitmap 256, 256
+$mg = [System.Drawing.Graphics]::FromImage($mb)
+$mg.Clear([System.Drawing.Color]::Black)
+$mg.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+$mg.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+$mg.DrawImage($ms, (New-Object System.Drawing.Rectangle 0, 0, 256, 256), $mr.X, $mr.Y, $mr.Width, $mr.Height, [System.Drawing.GraphicsUnit]::Pixel, $attr)
+$mg.Dispose(); $mb.Save((Join-Path $root "icons\mark.png"), [System.Drawing.Imaging.ImageFormat]::Png); $mb.Dispose(); $ms.Dispose()
+"wrote icons\mark.png"

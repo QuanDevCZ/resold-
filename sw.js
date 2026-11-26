@@ -1,5 +1,5 @@
 // Offline app shell. Bump VERSION when shipping changes so phones drop the old cache.
-const VERSION = "tt-v11";
+const VERSION = "tt-v27";
 const SHELL = [
   "./",
   "index.html",
@@ -8,7 +8,8 @@ const SHELL = [
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/apple-touch-icon.png",
-  "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"
+  "icons/mark.png",
+  "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"
 ];
 
 self.addEventListener("install", e => {

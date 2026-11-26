@@ -167,3 +167,81 @@ Pulling page (2026-11-25, from "commisions.jpg"; same look as Tickets):
 Descriptions + compact pass (2026-11-25): ticket group notes show as a third line in the group header
 (and labelled 'Description' when opened); Pulling has its own Notes column. Smaller cards, numbers,
 buttons, rows and gaps across the app so more fits on one screen. sw.js tt-v11.
+
+Neon chart, new mark, combined revenue (2026-11-26):
+- Profit chart (combined view) uses a purple-neon look from the user's reference: pink→lavender→white
+  gradient line with a glow, purple fade underneath, glowing end dot. Tickets / Pulling focus keep
+  their own colours.
+- New mark "Ō" from the user (icons/mark-source.jpg → icons/mark.png via tools/make-icons.ps1) in
+  the top-right of the top bar and on the recap ticket (top-left, 34 px). App icons unchanged.
+- Dashboard Revenue = ticket sales + pulling profit (pulls only store profit). Revenue, Profit and
+  ROI cards show just the number (Tickets card keeps its sold / unsold line).
+- sw.js tt-v13 (mark.png added to the offline shell).
+- Upcoming events rows show the group's transfer status as a pill on the right (Transferred green,
+  Pending transfer orange, Not transferred yet red). sw.js tt-v14.
+- Currency switch (2026-11-26): € / Kč toggle in the top bar, per device (localStorage tt-cur).
+  Display only: every amount (cards, chart, tables, breakdown) converts at the fixed 24.32 Kč/€ and
+  shows Czech style ("12 345 Kč", whole crowns). Amounts are still typed and saved in € (form labels
+  say €). The recap keeps showing both (€ big, Kč under it).
+- Tabs stay in sync: a "storage" listener reloads the data (and the currency) when another open tab
+  saves, so two open OOS tabs can't overwrite each other's edits. sw.js tt-v15.
+- Recap background (2026-11-26): the old SVG waves are replaced by a plain-JS port of Kokonut UI's
+  background-paths (canvas ribbon of 42 lines in 3 depth layers, flows, parts around the mouse, draws
+  in on open), coloured #ff2e88 -> #ff4d6d to match the recap, behind the top half of the ticket,
+  faded at top/bottom. Starts when a recap opens, stops when it closes; still for reduced motion.
+  Tuning: startPaths(canvas,{count,spread,angle,speed,interactive}). sw.js tt-v16.
+- Ticket group header shows Profit and ROI next to Invested (green / red) once at least one ticket
+  of the group is sold; groups with nothing sold show only Invested. sw.js tt-v18.
+- Per-ticket transfer (2026-11-26): opened groups have a Transfer column next to Status (Transferred /
+  Pending transfer / Not transferred, green / orange / red). Stored as lot.ttr[] (only when tickets
+  differ); a ticket without its own value uses the group's. The group status follows its tickets:
+  all transferred -> Transferred, none -> Not transferred, mixed -> Pending transfer. The group
+  dropdown sets every ticket. Seat column left-aligned again. sw.js tt-v19.
+- Profit chart: 'All' period after 90D (period 0 = from the first sale / pulling sale to today, min 7
+  days). No previous period there, so the dashed line, the % change and the twin dot are hidden and
+  the caption reads 'All time · since <first date>'. sw.js tt-v20.
+- Pulling: Payout column next to Status (Paid out green / Not paid out red), editable in the row and in
+  the edit form (pull.paid; existing sales start as Not paid out). sw.js tt-v21.
+- Bulk bars: Tickets bar has a 'Set transfer…' dropdown (Transferred / Pending / Not transferred) for the
+  selected tickets (per-ticket, group status follows). Pulling bar has Mark paid out / Mark not paid
+  out next to the transfer buttons. sw.js tt-v22.
+- Chart: Profit / Revenue switch at its top left (remembered per device, tt-met). Revenue = tickets at
+  their sale price + pulling profit, same rule as the Revenue card; breakdown, periods, ranges and the
+  € / Kč switch all work for both. sw.js tt-v23.
+
+unslop pass on the Tickets page (2026-11-26, with the unslop skill by @heydamir, CC BY 4.0):
+Direction: OOS tracks one person's ticket resale. Character: sharp, nocturnal, a little flashy.
+World: event night (arenas after dark, ticket stubs). Moments: the money line per group, the opened
+ticket list. Signature: a perforated ticket-stub edge (dashed line + two notches) where an opened group
+tears into its ticket table. Kept on purpose (user): neon chart, recap red lines, pink accent.
+- Pink only on Add New, the active tab (pink text on a raised step) and the Ticket profit figure; the
+  active sort chip is neutral; no pink wash behind the header on this page.
+- "N tickets" is quiet mono text; group transfer chips are a coloured dot + text; Status / Transfer
+  dropdowns are neutral controls with a coloured dot.
+- Sentence-case labels and table headers, tabular figures, € amounts in one format (no ".00").
+- Spacing on the 4px grid, one icon size (16) and stroke (1.5), radii by size, one easing curve.
+- Copy: no full stop on the subtitle, "Search" placeholder, filler "All time" lines removed.
+All rules are scoped to #p1 (Tickets) so other pages are unchanged. sw.js tt-v24.
+
+unslop on the whole app + new shell (2026-11-26), modelled on unslop's own "after" dashboard
+(refs/unslop-dashboard-after.webp in the unslop repo). Same direction as the Tickets pass.
+Kept on purpose: neon chart, recap ticket + red lines, pink accent (Add New, active tab, one key figure).
+- Graphite ramp everywhere: page #141415, sidebar #0f0f10, cards #19191b, raised #232325, hairlines at
+  8%, text #ededed / #a1a1a6 / #85858b. No pink wash anywhere.
+- Desktop (>=1024): persistent 248px sidebar instead of the drawer (phone keeps the drawer):
+  OŌS mark + wordmark, Search with Ctrl K keycaps (types into the Tickets search and jumps there),
+  "Navigation" (Dashboard, Tickets n, Pulling n), "System" (Data & export, Sync), "Transfers" (dot rows:
+  Transferred / Pending transfer / Not transferred with group counts), footer card with a neutral bar.
+  Section labels in muted mono, rows 36px, active row = raised surface + hairline. Top bar = breadcrumb
+  (page icon + name), currency switch on the right.
+- Dashboard: title is the period ("November 2026", year muted) with the sync status as a small mono line
+  with a status dot; the OŌS wordmark moves to the sidebar. Tickets stat card gets the moment: two
+  rendered ticket stubs built in CSS (graphite, notches, perforation, barcode, mark), card a bit wider.
+- Everywhere: sentence-case labels / table headers / form labels, mono for counts and meta, period pill,
+  Profit/Revenue switch and currency switch neutral, upcoming-events status and Pulling Status / Payout
+  as coloured dot + text, spacing on 4px, icons 16-18 at 1.5 stroke, one easing curve.
+  Done 2026-11-26: shell + app-wide pass applied; status copy without full stops; events status short
+  labels (Transferred / Pending / Not transferred); Pulling table fits (940px). sw.js tt-v26.
+- Sidebar can be closed on desktop: panel icon top-right of the sidebar closes it (slides out, content
+  takes the full width); the ☰ button in the top bar or Ctrl K brings it back. Remembered per device
+  (tt-side). On phones the same icon closes the drawer. sw.js tt-v27.
