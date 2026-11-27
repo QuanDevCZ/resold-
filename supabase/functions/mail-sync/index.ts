@@ -6,7 +6,10 @@
 // is marked read, moved or deleted. It only returns guesses; the app asks you before adding anything.
 
 export const DEFAULT_KW = ["ticket", "tickets", "order confirmation", "sold", "vstupenky", "objednavka"];
-const MAX_MSGS = 30, MAX_BYTES = 61440;
+// 150 KB per message: HTML order emails often put the total far down the page
+const MAX_MSGS = 30, MAX_BYTES = 153600;
+/* subjects that are never a purchase, sale or transfer: on-sale alerts, helpdesk tickets, welcome mails */
+const NOISE = /helpdesk|support ticket|go(?:es)? on sale|on sale (?:soon|now|today|tomorrow)|presale|pre-sale|welcome to|newsletter|survey|verify your|reset your password/i;
 
 /* ---------------- tiny IMAP client over any byte stream ---------------- */
 export type Conn = { read(p: Uint8Array): Promise<number | null>; write(p: Uint8Array): Promise<number>; close(): void };
@@ -55,6 +58,7 @@ export const q = (s: string) => '"' + s.replace(/[\\"]/g, (m) => "\\" + m) + '"'
 export function buildQuery(kws: string[], since: string | null) {
   const k = kws.map((w) => w.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/["()]/g, "").trim()).filter(Boolean).slice(0, 20);
   return `subject:(${(k.length ? k : DEFAULT_KW).map((w) => `"${w}"`).join(" OR ")}) -category:promotions ` +
+    `-subject:(helpdesk OR "on sale" OR presale OR welcome OR newsletter) ` +
     (since ? `after:${since.replace(/-/g, "/")}` : "newer_than:120d");
 }
 
@@ -83,7 +87,39 @@ export async function findMail(conn: Conn, user: string, pass: string, query: st
     }
   }
   try { await im.cmd("LOGOUT"); } catch (_) { /* closing anyway */ }
-  return out.sort((a, b) => b.uid - a.uid);
+  return mergeDupes(out.filter((m) => m.guess.type !== "skip")).sort((a, b) => b.uid - a.uid);
+}
+
+/* subject without Fwd:/Re:/Fw:/Tr:/Odp:/AW:/WG: prefixes */
+export const baseSubject = (s: string) => s.replace(/^\s*((re|fwd?|tr|odp|aw|wg|sv)\s*:\s*)+/i, "").trim();
+
+/* a forwarded or replied copy of the same email becomes one entry: the original wins, empty fields are
+   filled from the copies, and the copies' ids travel along so Add / Ignore marks all of them handled.
+   Same subject alone isn't enough (two different orders can share it): dates within 4 days and no
+   conflicting totals. */
+export function mergeDupes<T extends { id: string; subject: string; date: string; guess: Record<string, unknown> }>(list: T[]) {
+  const key = (m: T) => baseSubject(m.subject).toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const groups: T[][] = [];
+  for (const m of list) {
+    const g = groups.find((gr) => {
+      const a = gr[0];
+      if (key(a) !== key(m)) return false;
+      if (a.date && m.date && Math.abs(Date.parse(a.date) - Date.parse(m.date)) > 4 * 864e5) return false;
+      const ta = +(a.guess.total as number) || 0, tm = +(m.guess.total as number) || 0;
+      return !(ta && tm && Math.abs(ta - tm) > 0.01);
+    });
+    if (g) g.push(m); else groups.push([m]);
+  }
+  return groups.map((g) => {
+    const main = g.find((m) => baseSubject(m.subject) === m.subject.trim()) || g[0];
+    const guess = { ...main.guess };
+    for (const o of g) {
+      if (o === main) continue;
+      for (const k of ["event", "eventDate", "sector", "row", "seats"]) if (!guess[k] && o.guess[k]) guess[k] = o.guess[k];
+      if (!guess.total && o.guess.total) for (const k of ["total", "each", "currency", "qty"]) guess[k] = o.guess[k];
+    }
+    return { ...main, guess, alt: g.filter((o) => o !== main).map((o) => o.id) };
+  });
 }
 
 /* ---------------- MIME ---------------- */
@@ -132,11 +168,22 @@ export const htmlText = (s: string) => s.replace(/<(style|script|head)[\s\S]*?<\
 export function parseMessage(src: string, uid = 0) {
   const i = src.search(/\r?\n\r?\n/), h = headers(i < 0 ? src : src.slice(0, i));
   const ps = parts(src), plain = ps.find((p) => p.type === "text/plain" && p.text.trim().length > 200), html = ps.find((p) => p.type === "text/html");
-  const text = plain ? plain.text.replace(/\r/g, "") : html ? htmlText(html.text) : (ps[0]?.text || "");
+  const text = cleanText(plain ? plain.text.replace(/\r/g, "") : html ? htmlText(html.text) : (ps[0]?.text || ""));
   const subject = words(h["subject"] || "").replace(/\s+/g, " ").trim(), from = words(h["from"] || "").trim();
   const d = new Date(h["date"] || ""), date = isNaN(+d) ? "" : d.toISOString();
   return { id: (h["message-id"] || "").replace(/[<>\s]/g, "") || "uid:" + uid, uid, from, subject, date,
-    snippet: text.replace(/\s+/g, " ").trim().slice(0, 240), guess: guess(subject, text, date) };
+    snippet: text.replace(/\s+/g, " ").trim().slice(0, 240), guess: guess(subject, text, date),
+    // for tuning only: the app shows it in the console and never saves it
+    text: text.slice(0, 3000) };
+}
+
+/* drop the header block of a forwarded message (its From/Date/Subject/To lines would be read as the
+   event date) and the ">" marks of quoted replies */
+export function cleanText(t: string) {
+  const mark = /-{2,}\s*(?:forwarded message|original message|přeposlaná zpráva|původní zpráva|preposlana zprava|puvodni zprava)\s*-{2,}/gi;
+  t = t.replace(new RegExp(mark.source + "[\\s\\S]{0,600}?(?:^|\\n|\\s)(?:to|komu)\\s*:[^\\n]*", "gi"), "\n");
+  t = t.replace(new RegExp(mark.source + "[\\s\\S]{0,600}?(?:^|\\n|\\s)(?:subject|předmět|predmet)\\s*:[^\\n]*", "gi"), "\n");
+  return t.replace(/^[ \t]*>+[ \t]?/gm, "").replace(/\n{3,}/g, "\n\n").trim();
 }
 
 /* ---------------- guesses ---------------- */
@@ -175,16 +222,21 @@ export function amounts(t: string) {
 }
 const TOTAL = /(grand total|order total|total paid|total|you paid|amount paid|celkem|k úhradě|k uhrade|payout|you('|’)ll receive|you will receive|earnings|proceeds|výplata|vyplata)/gi;
 export function guess(subject: string, text: string, date = "") {
-  const T = subject + "\n" + text, s = fold(subject).toLowerCase();
+  const subj = baseSubject(subject), T = subj + "\n" + text, s = fold(subj).toLowerCase();
   const sale = /\bsold\b|payout|paid out|prodan|prodej/.test(s) || /(your (tickets?|listing)s? (has|have) (been )?sold|you('|’)ve sold|you have sold)/i.test(T);
-  // event: a labelled line wins, else the subject without the "order confirmation"-style words
-  const lab = text.match(/^(?:event|akce|představení|predstaveni|koncert)\s*[:\-]\s*(.{3,80})$/im);
-  let event = lab ? lab[1].trim() : subject.replace(/^((re|fw|fwd)\s*:\s*)+/i, "")
-    .replace(/(order confirmation|confirmation of your order|your order( for)?|you('|’)ve got tickets( to)?|you got tickets( to)?|your tickets?( (for|to))?|tickets? (for|to)|your listing( for)?|(has|have) (been )?sold!?|you('|’)ve sold( tickets?( (for|to))?)?|sold:|potvrzen[ií] objedn[aá]vky|objedn[aá]vka|vstupenky na)/gi, " ")
-    .replace(/^[\s\-–:|!,.]+|[\s\-–:|!,.]+$/g, "").replace(/\s{2,}/g, " ");
-  if (!event) event = subject;
-  const day = date.slice(0, 10), ds = dates(fold(text) + "\n" + fold(subject));
-  const eventDate = ds.find((d) => !day || d >= day) || ds[0] || "";
+  const transfer = !sale && /transferred|transfer (?:complete|accepted|sent|received)|accepted .{0,80}tickets?|has accepted|delat biljetter|sent you (?:\d+ )?tickets?|tickets? (?:are|have been) (?:sent|transferred)|in your account|prevod vstupen|prevedl/.test(s);
+  const type = NOISE.test(s) ? "skip" : sale ? "sale" : transfer ? "transfer" : "purchase";
+  // event: a labelled line wins, then the subject without "order confirmation"-style words and order
+  // numbers, then a "Booking confirmation for X at Venue"-style line in the body
+  const lab = text.match(/^(?:event|event name|akce|představení|predstaveni|koncert)\s*[:\-]\s*(.{3,80})$/im);
+  let event = lab ? lab[1].trim() : cleanEvent(subj);
+  if (event.length < 3) {
+    const b = text.match(/(?:booking confirmation for|tickets? (?:to|for)|you(?:'|’)re going to)\s*:?\s*([^\n]{3,80}?)(?:\s+at\s+|\s*[\n.!]|$)/i);
+    event = b ? b[1].trim() : subj;
+  }
+  // the event happens after the email was sent: a date on the email's own day is the order date
+  const day = date.slice(0, 10), ds = dates(fold(text) + "\n" + fold(subj));
+  const eventDate = ds.find((d) => !day || d > day) || (day ? "" : ds[0] || "");
   const am = amounts(T); let total = 0, currency = "EUR";
   for (const m of T.matchAll(TOTAL)) { const a = am.find((x) => x.i > m.index! && x.i - m.index! < 80); if (a) { total = a.v; currency = a.cur; break; } }
   if (!total && am.length) { const a = am.reduce((x, y) => (y.v > x.v ? y : x)); total = a.v; currency = a.cur; }
@@ -196,7 +248,17 @@ export function guess(subject: string, text: string, date = "") {
   const row = f1(/\b(?:row|rada)\s*[:#\-]?\s*([A-Za-z0-9]{1,5})\b/i);
   const sm = ft.match(/\b(?:seats?|sedadl[oa]|mista|misto)\s*[:#\-]?\s*(\d{1,4}(?:\s*(?:[-–,&]|and|to|a)\s*\d{1,4})*)/i);
   const seats = sm ? sm[1].replace(/\s*(?:–|to)\s*/g, "-").replace(/\s*(?:&|and|a)\s*/g, ",").replace(/\s+/g, "") : "";
-  return { type: sale ? "sale" : "purchase", event: event.slice(0, 90), eventDate, qty, total, each: total ? Math.round(total / qty * 100) / 100 : 0, currency, sector, row, seats };
+  return { type, event: event.slice(0, 90), eventDate, qty, total, each: total ? Math.round(total / qty * 100) / 100 : 0, currency, sector, row, seats };
+}
+
+/* subject → event name: drop shop / confirmation words, order numbers and leftover punctuation */
+export function cleanEvent(subj: string) {
+  return subj
+    .replace(/\b(?:order|booking|ref(?:erence)?|objedn\w*|ticket)?\s*(?:no\.?|number|č\.?|#)?\s*[:#]?\s*\d{6,}\b/gi, " ")
+    .replace(/(ticket order confirmation|order confirmation( from)?|booking confirmation( for)?|ticket confirmation|confirmation of your order|confirmation|your order( for| from)?|you('|’)re in!?( your)?|you('|’)ve got tickets?( to)?|you got tickets?( to)?|your tickets?( (for|to|are available on \w+))?|tickets? (for|to)|your listing( for)?|(has|have) (been )?sold!?|you('|’)ve sold( tickets?( (for|to))?)?|sold:|ticketmaster \w{2}\s*-|vaše vstupenky|vase vstupenky|potvrzen[ií] objedn[aá]vky|objedn[aá]vka|vstupenky na|\bticket\b)/gi, " ")
+    .replace(/\s*[,:]\s*$/g, "").replace(/^[\s\-–—:|!,.]+|[\s\-–—:|!,.]+$/g, "").replace(/\s{2,}/g, " ").trim()
+    // a lone leftover word like "from" or "for" is not an event name
+    .replace(/^(?:from|for|to|at|on|and|the)$/i, "");
 }
 
 /* ---------------- HTTP ---------------- */

@@ -248,3 +248,19 @@ Kept on purpose: neon chart, recap ticket + red lines, pink accent (Add New, act
 - Tickets: Profit of a sold ticket is click-to-edit (Enter saves, Esc cancels, typed in € or Kč as shown);
   sale price = cost + profit, a multi-ticket sale is split so only that ticket changes.
 - Dashboard title: OŌS wordmark | month + muted year. sw.js tt-v28.
+
+Email reader tuning v2 (2026-11-27), from the first real sync of 30 emails:
+- Noise dropped: query excludes helpdesk / "on sale" / presale / welcome / newsletter subjects, and the
+  parser marks such subjects "skip" (never returned).
+- New type "transfer" (transferred / accepted / delat biljetter / in your account …). Review card
+  "Transfer" picks the group and sets it to Transferred or Pending transfer.
+- Forwarded / Re: copies merged (same base subject, within 4 days, no conflicting totals): the original
+  wins, empty fields filled from copies, copies' ids in `alt` so Add/Ignore marks all of them seen.
+- Forward header block stripped before guessing; event date must be after the email's own day.
+- Event names: order numbers and shop words removed; body fallback ("Booking confirmation for X at …",
+  "tickets for X").
+- Fetch limit 60 KB -> 150 KB per message. Function returns cleaned `text` (3000 chars) for tuning;
+  the app keeps it in memory only (window.__mailText), never saved.
+- Tests: 16 pass (6 new from real subjects). sw.js tt-v29. User must re-paste the function.
+- Browser tab icon (favicon) is now the round Ō mark (icons/mark.png) instead of the OŌS app icon;
+  the home-screen icon is unchanged. sw.js tt-v30.

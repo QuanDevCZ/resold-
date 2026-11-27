@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="OOS">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="icon" type="image/png" href="icons/mark.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -392,7 +392,7 @@ details.lot[open] .chev{transform:rotate(180deg)}
 .rv-tt span{display:block;margin-top:2px;font-size:12px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rv-t{width:auto;flex:none;padding:6px 10px;font-size:13px}
 .rv-s{margin:10px 0 12px;font-size:13px;color:var(--mute);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.rv[data-t="purchase"] .rv-sl,.rv[data-t="sale"] .rv-p{display:none}
+.rv[data-t="purchase"] .rv-sl,.rv[data-t="sale"] .rv-p,.rv[data-t="transfer"] .rv-p,.rv[data-t="transfer"] .rv-sl,.rv[data-t="purchase"] .rv-tr,.rv[data-t="sale"] .rv-tr{display:none}
 .rv-n{margin:10px 0 0;font-size:12.5px;color:var(--mute)}
 .rv-n.warn{color:#ff9f40}
 @media (max-width:600px){.ph-a{width:100%}.rv-h{flex-direction:column}}
@@ -1070,23 +1070,26 @@ S.lots.forEach(l=>{const s=words2(l.event).filter(x=>w.has(x)).length*10+(soldQ(
 const eachEur=g=>!g.each?"":g.currency==="CZK"?Math.round(g.each/CZK*100)/100:g.each;
 function curNote(g){if(!g.total||g.currency==="EUR")return"";
 return g.currency==="CZK"?`<p class="rv-n">Amount was ${sp(g.total)} Kč, converted at ${CZK} Kč/€. Check it.</p>`:`<p class="rv-n warn">Amount is in ${esc(g.currency)} (${g.total}), so convert the price to €.</p>`}
-function rvCard(m){const g=m.guess||{},t=g.type==="sale"?"sale":"purchase",bl=bestLot(g.event),day=(m.date||"").slice(0,10)||today();
+function rvCard(m){const g=m.guess||{},t=g.type==="sale"||g.type==="transfer"?g.type:"purchase",bl=bestLot(g.event),day=(m.date||"").slice(0,10)||today();
 const opts=S.lots.slice().sort((a,b)=>(a.eventDate||"9").localeCompare(b.eventDate||"9")).map(l=>`<option value="${l.id}" ${bl&&bl.id===l.id?"selected":""}>${esc(l.event)} · ${l.eventDate?dmy(l.eventDate):"no date"} · ${l.qty-soldQ(l)} unsold</option>`).join("");
 return `<div class="rv" data-m="${esc(m.id)}" data-t="${t}"><div class="rv-h"><div class="rv-tt"><b>${esc(m.subject||"(no subject)")}</b><span>${esc(m.from)} · ${m.date?dmy(m.date.slice(0,10)):""}</span></div>
-<select class="rv-t" aria-label="What is this email"><option value="purchase" ${t==="purchase"?"selected":""}>New tickets</option><option value="sale" ${t==="sale"?"selected":""}>Sale</option></select></div>
+<select class="rv-t" aria-label="What is this email"><option value="purchase" ${t==="purchase"?"selected":""}>New tickets</option><option value="sale" ${t==="sale"?"selected":""}>Sale</option><option value="transfer" ${t==="transfer"?"selected":""}>Transfer</option></select></div>
 <p class="rv-s">${esc(m.snippet)}</p>
 <div class="grid rv-p"><label style="grid-column:1/-1">Event<input class="v-e" value="${esc(g.event)}"></label><label>Event date<input class="v-d" type="date" value="${esc(g.eventDate)}"></label><label>Tickets bought<input class="v-q" type="number" min="1" step="1" value="${g.qty||1}"></label><label>Cost per ticket (€)<input class="v-k" type="number" min="0" step="0.01" value="${eachEur(g)}"></label><label>Sector<input class="v-s" value="${esc(g.sector)}"></label><label>Row<input class="v-r" value="${esc(g.row)}"></label><label>Seats<input class="v-se" value="${esc(g.seats)}"></label></div>
 <div class="grid rv-sl"><label style="grid-column:1/-1">Ticket group<select class="v-l">${opts||'<option value="">No ticket groups yet</option>'}</select></label><label>Sale date<input class="v-sd" type="date" value="${esc(day)}"></label><label>Tickets sold<input class="v-sq" type="number" min="1" step="1" value="${g.qty||1}"></label><label>Price each (€)<input class="v-sp" type="number" min="0" step="0.01" value="${eachEur(g)}"></label></div>
-${curNote(g)}<div class="row"><button class="btn sm" data-a="ra" type="button">Add</button><button class="btn ghost sm" data-a="ri" type="button">Ignore</button></div></div>`}
+<div class="grid rv-tr"><label style="grid-column:1/-1">Ticket group<select class="v-tl">${opts||'<option value="">No ticket groups yet</option>'}</select></label><label>Set transfer to<select class="v-ts"><option value="yes">Transferred</option><option value="pending">Pending transfer</option></select></label></div>
+${t==="transfer"?"":curNote(g)}<div class="row"><button class="btn sm" data-a="ra" type="button">Add</button><button class="btn ghost sm" data-a="ri" type="button">Ignore</button></div></div>`}
 const rvEmpty='<div class="empty">Nothing to review. Use Sync → Sync ticket emails to look for new ones.</div>';
 const reviewSheet=()=>`<div class="sheet"><div class="rv-top"><h3 class="sh-t" style="margin:0">Review emails <span class="mu" id="rvc">${S.mail.length}</span></h3><button class="btn ghost sm" data-a="cl" type="button">Close</button></div>
 <p class="sub" style="margin:6px 0 0;font-size:13px">The app guessed these from your ticket emails. Fix anything that's off, then Add or Ignore. Nothing is added until you click Add.</p>
 <div id="rvl">${S.mail.length?S.mail.map(rvCard).join(""):rvEmpty}</div></div>`;
 const kwSheet=()=>`<div class="sheet"><h3 class="sh-t">Search keywords</h3><p class="sub" style="font-size:13px;margin:0 0 12px">Sync looks for emails whose <b>subject</b> contains any of these words. One per line. Accents are ignored.</p>
 <textarea id="kwt" rows="7">${esc(kwList().join("\n"))}</textarea><div class="row"><button class="btn sm" data-a="kws" type="button">Save</button><button class="btn ghost sm" data-a="kwr" type="button">Reset to default</button><button class="btn ghost sm" data-a="cl" type="button">Cancel</button></div></div>`;
-function rvDone(card,msg){const id=card.dataset.m;S.mail=S.mail.filter(m=>m.id!==id);if(!S.seen.includes(id))S.seen.push(id);if(S.seen.length>2000)S.seen=S.seen.slice(-2000);
+function rvDone(card,msg){const id=card.dataset.m,it=S.mail.find(m=>m.id===id);S.mail=S.mail.filter(m=>m.id!==id);[id].concat(it&&it.alt||[]).forEach(x=>{if(!S.seen.includes(x))S.seen.push(x)});if(S.seen.length>2000)S.seen=S.seen.slice(-2000);
 card.remove();const c=document.getElementById("rvc");if(c)c.textContent=S.mail.length;if(!S.mail.length){const l=document.getElementById("rvl");if(l)l.innerHTML=rvEmpty}persist();render();if(msg)note(msg)}
 function rvAdd(card){const v=c=>card.querySelector(c).value.trim();
+if(card.dataset.t==="transfer"){const l=S.lots.find(x=>x.id===v(".v-tl")),st=v(".v-ts");if(!l){note("Pick the ticket group that was transferred.",1);return}
+l.transfer=st;delete l.ttr;openIds.add(l.id);rvDone(card,l.event+" set to "+TR[st].toLowerCase()+".");return}
 if(card.dataset.t==="purchase"){const q=+v(".v-q"),k=v(".v-k");
 if(!v(".v-e")||!v(".v-d")||!(q>=1)||k===""||+k<0){note("Fill in the event, event date, tickets bought and cost per ticket.",1);return}
 const m=S.mail.find(x=>x.id===card.dataset.m);
@@ -1104,7 +1107,9 @@ syncing=true;const lab=$("msl");lab.textContent="Searching Gmail…";
 try{const d=S.mailAt?new Date(S.mailAt+"T00:00:00"):null;if(d)d.setDate(d.getDate()-2);
 const {data,error}=await sb.functions.invoke("mail-sync",{body:{keywords:kwList(),since:d?ymd(d):null}});
 if(error){let m="";try{m=(await error.context.json()).error}catch(x){}throw new Error(m||error.message||"Email sync failed.")}
-const seen=new Set(S.seen),have=new Set(S.mail.map(m=>m.id)),fresh=(data.found||[]).filter(m=>!seen.has(m.id)&&!have.has(m.id));
+const seen=new Set(S.seen),have=new Set(S.mail.flatMap(m=>[m.id].concat(m.alt||[]))),known=x=>seen.has(x)||have.has(x);
+window.__mailText={};(data.found||[]).forEach(m=>{window.__mailText[m.id]=m.text});
+const fresh=(data.found||[]).filter(m=>!known(m.id)&&!(m.alt||[]).some(known)).map(({text,...m})=>m);
 S.mail=fresh.concat(S.mail);S.mailAt=today();persist();
 note(fresh.length?"Found "+fresh.length+" new ticket email"+(fresh.length===1?"":"s")+".":"No new ticket emails.");
 if(fresh.length){reviewing=true;const o=document.getElementById("ov-review");if(o)o.remove()}render()}

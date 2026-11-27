@@ -2,7 +2,7 @@
 // Real Gmail can't be reached from a test, so the IMAP part runs against a scripted fake Gmail.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseMessage, guess, findMail, buildQuery, num, dates, words } from "../supabase/functions/mail-sync/index.ts";
+import { parseMessage, guess, findMail, buildQuery, num, dates, words, cleanEvent, cleanText, mergeDupes } from "../supabase/functions/mail-sync/index.ts";
 
 const b64 = (s) => Buffer.from(s, "utf8").toString("base64").replace(/.{76}/g, "$&\r\n");
 const latin1 = (buf) => Buffer.from(buf).toString("latin1");
@@ -111,7 +111,7 @@ test("encoded words", () => {
 });
 
 test("query: keywords without diacritics or quotes, date filter", () => {
-  assert.equal(buildQuery(["Vstupenky", 'or"der'], "2026-11-01"), 'subject:("Vstupenky" OR "order") -category:promotions after:2026/11/01');
+  assert.equal(buildQuery(["Vstupenky", 'or"der'], "2026-11-01"), 'subject:("Vstupenky" OR "order") -category:promotions -subject:(helpdesk OR "on sale" OR presale OR welcome OR newsletter) after:2026/11/01');
   assert.match(buildQuery([], null), /newer_than:120d$/);
 });
 
@@ -163,4 +163,59 @@ test("IMAP: read-only All Mail, search, literals across chunks, newest first", a
 
 test("IMAP: wrong password gives a clear message", async () => {
   await assert.rejects(findMail(fakeGmail({}), "me@gmail.com", "bad", "x"), /app password/);
+});
+
+/* ---- tuning from the first real sync (2026-11-27): subjects as they arrived ---- */
+test("event names: order numbers and shop words go, the event stays", () => {
+  assert.equal(cleanEvent("Foo Fighters - Ticket Order Confirmation 131258466"), "Foo Fighters");
+  assert.equal(cleanEvent("You’re in! Your SAN FRANCISCO 49ERS V. MINNESOTA VIKINGS ticket confirmation"), "SAN FRANCISCO 49ERS V. MINNESOTA VIKINGS");
+  assert.equal(cleanEvent("Ticketmaster CZ - Sara Rikas Live: Vaše vstupenky"), "Sara Rikas Live");
+  assert.equal(cleanEvent("Order Confirmation — Seattle Symphony | Benaroya Hall"), "Seattle Symphony | Benaroya Hall");
+  assert.equal(cleanEvent("Your order confirmation from , order number: 1064905385"), "");
+  assert.equal(cleanEvent("You got ticket to Calvin Harris - North America Tour"), "Calvin Harris - North America Tour");
+});
+
+test("types: noise is skipped, transfers are transfers, Fwd/Re prefixes don't matter", () => {
+  const type = (s) => guess(s, "", "2026-11-11T10:00:00Z").type;
+  assert.equal(type("Tickets go on sale soon! (Eagles)"), "skip");
+  assert.equal(type("There is a reply to your helpdesk ticket"), "skip");
+  assert.equal(type("Welcome to Connect Tickets"), "skip");
+  assert.equal(type("Du har delat biljetter / You’ve transferred tickets"), "transfer");
+  assert.equal(type("Fwd: Du har delat biljetter / You’ve transferred tickets"), "transfer");
+  assert.equal(type("Rico accepted San Francisco 49ers v. Minnesota Vikings ticket"), "transfer");
+  assert.equal(type("Dina biljetter finns på ditt konto / Your tickets are in your account"), "transfer");
+  assert.equal(type("Fwd: Foo Fighters - Ticket Order Confirmation 131258466"), "purchase");
+  assert.equal(type("Your tickets have sold! Sam Fender - Newcastle"), "sale");
+});
+
+test("a forwarded copy: its header date is not the event date", () => {
+  const body = "---------- Forwarded message ---------\nFrom: gigsandtours.com <donotreply@gigsandtours.com>\nDate: Thu 19. 11. 2026 at 11:10\nSubject: Foo Fighters - Ticket Order Confirmation 131258466\nTo: <me@example.com>\n\nBooking confirmation for Foo Fighters - TAKE COVER TOUR 2027 at Wembley Stadium, London\nSaturday 11 September 2027\nTotal: £391.25";
+  const t = cleanText(body);
+  assert.ok(!/Forwarded message|donotreply/.test(t), "forward header removed");
+  const g = guess("Fwd: Foo Fighters - Ticket Order Confirmation 131258466", t, "2026-11-19T10:15:00Z");
+  assert.deepEqual([g.type, g.event, g.eventDate, g.total, g.currency], ["purchase", "Foo Fighters", "2027-09-11", 391.25, "GBP"]);
+});
+
+test("a date on the email's own day is not the event date", () => {
+  assert.equal(guess("Order", "Ordered 19.11.2026", "2026-11-19T08:00:00Z").eventDate, "");
+  assert.equal(guess("Order", "Ordered 19.11.2026, event 20.11.2026", "2026-11-19T08:00:00Z").eventDate, "2026-11-20");
+});
+
+test("event name falls back to the body when the subject has none", () => {
+  const g = guess("Your order confirmation from , order number: 1064905385", "Thank you. Your tickets for Coldplay - Music of the Spheres at Letňany, Prague.", "2026-11-01T08:00:00Z");
+  assert.equal(g.event, "Coldplay - Music of the Spheres");
+});
+
+test("duplicates: the original wins, copies fill gaps, different orders stay apart", () => {
+  const m = (id, subject, date, total, extra = {}) => ({ id, subject, date, guess: { event: "Foo Fighters", eventDate: "", total, each: total, currency: total ? "GBP" : "EUR", qty: 6, sector: "", row: "", seats: "", ...extra } });
+  const out = mergeDupes([
+    m("fwd", "Fwd: Foo Fighters - Ticket Order Confirmation 131258466", "2026-11-19T10:00:00Z", 391.25),
+    m("orig", "Foo Fighters - Ticket Order Confirmation 131258466", "2026-11-19T09:10:00Z", 0, { eventDate: "2027-09-11" }),
+    m("a", "You’re in! Your 49ERS ticket confirmation", "2026-11-15T10:00:00Z", 8234),
+    m("b", "Fwd: You’re in! Your 49ERS ticket confirmation", "2026-11-15T12:00:00Z", 4142),
+  ]);
+  assert.equal(out.length, 3);
+  const foo = out.find((x) => x.id === "orig");
+  assert.deepEqual([foo.guess.total, foo.guess.currency, foo.guess.eventDate, foo.alt], [391.25, "GBP", "2027-09-11", ["fwd"]]);
+  assert.ok(out.some((x) => x.id === "a") && out.some((x) => x.id === "b"), "two different 49ers orders stay separate");
 });
